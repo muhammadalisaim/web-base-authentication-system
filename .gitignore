@@ -1,0 +1,10 @@
+.venv/
+__pycache__/
+.pytest_cache/
+*.py[cod]
+*.db
+.env
+# SSL certificates and private keys (generated on the fly)
+*.pem
+ssl_key.pem
+ssl_cert.pem

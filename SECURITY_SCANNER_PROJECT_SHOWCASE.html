@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Automated Website Security Audit & Vulnerability Scanner — Project Showcase</title>
+    <style>
+        :root {
+            --bg-primary: #0a0f1d;
+            --bg-secondary: #111827;
+            --bg-card: #1f2937;
+            --bg-card-hover: #283548;
+            --border: #374151;
+            --border-light: #4b5563;
+            --text-primary: #f9fafb;
+            --text-secondary: #9ca3af;
+            --text-muted: #6b7280;
+            --accent-blue: #3b82f6;
+            --accent-blue-hover: #2563eb;
+            --accent-cyan: #06b6d4;
+            --critical: #ef4444;
+            --high: #f97316;
+            --medium: #f59e0b;
+            --low: #3b82f6;
+            --info: #64748b;
+            --success: #10b981;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding-bottom: 60px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Top Hero */
+        header.hero {
+            background: linear-gradient(180deg, #131d36 0%, var(--bg-primary) 100%);
+            border-bottom: 1px solid var(--border);
+            padding: 48px 0 36px 0;
+            margin-bottom: 32px;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            padding: 6px 14px;
+            border-radius: 9999px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .hero-title {
+            font-size: 2.4rem;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+            color: #ffffff;
+            margin-bottom: 12px;
+        }
+
+        .hero-subtitle {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            max-width: 800px;
+            margin-bottom: 24px;
+        }
+
+        .hero-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .hero-meta span strong {
+            color: var(--text-primary);
+        }
+
+        /* Navigation Tabs */
+        .tabs-nav {
+            display: flex;
+            gap: 8px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 32px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            padding: 12px 20px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.15s ease;
+            white-space: nowrap;
+        }
+
+        .tab-btn:hover {
+            color: #ffffff;
+            background: var(--bg-secondary);
+        }
+
+        .tab-btn.active {
+            color: #ffffff;
+            background: var(--accent-blue);
+        }
+
+        /* Content Sections */
+        .tab-pane {
+            display: none;
+            animation: fadeIn 0.2s ease-in;
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Metric Cards Grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+
+        .metric-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--accent-blue);
+        }
+
+        .metric-card.success::before { background: var(--success); }
+        .metric-card.warning::before { background: var(--medium); }
+        .metric-card.danger::before { background: var(--critical); }
+
+        .metric-title {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 0.05em;
+        }
+
+        .metric-value {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin: 8px 0 4px 0;
+        }
+
+        .metric-desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            transition: border-color 0.15s ease;
+        }
+
+        .feature-card:hover {
+            border-color: var(--accent-blue);
+        }
+
+        .feature-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .feature-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--accent-blue);
+        }
+
+        .feature-card h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .feature-card p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        .feature-list {
+            list-style: none;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .feature-list li {
+            padding: 6px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-list li::before {
+            content: "✓";
+            color: var(--success);
+            font-weight: bold;
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .badge-critical { background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.4); }
+        .badge-high { background: rgba(249, 115, 22, 0.2); color: #fdba74; border: 1px solid rgba(249, 115, 22, 0.4); }
+        .badge-medium { background: rgba(245, 158, 11, 0.2); color: #fde68a; border: 1px solid rgba(245, 158, 11, 0.4); }
+        .badge-low { background: rgba(59, 130, 246, 0.2); color: #93c5fd; border: 1px solid rgba(59, 130, 246, 0.4); }
+        .badge-info { background: rgba(100, 116, 139, 0.2); color: #cbd5e1; border: 1px solid rgba(100, 116, 139, 0.4); }
+        .badge-success { background: rgba(16, 185, 129, 0.2); color: #86efac; border: 1px solid rgba(16, 185, 129, 0.4); }
+
+        /* Tables */
+        .table-wrap {
+            overflow-x: auto;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin-bottom: 32px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            text-align: left;
+        }
+
+        th, td {
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: rgba(0, 0, 0, 0.2);
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        code {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #38bdf8;
+            font-size: 0.85em;
+        }
+
+        pre {
+            background: #0f172a;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            overflow-x: auto;
+            color: #e2e8f0;
+            font-size: 0.85rem;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            line-height: 1.5;
+            margin: 12px 0;
+        }
+
+        /* Architecture Diagram Box */
+        .arch-diagram {
+            background: #0f172a;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 32px;
+            font-family: ui-monospace, monospace;
+            font-size: 0.85rem;
+            white-space: pre;
+            overflow-x: auto;
+            color: #38bdf8;
+            line-height: 1.4;
+        }
+
+        /* Accordion */
+        .accordion-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-bottom: 12px;
+            overflow: hidden;
+        }
+
+        .accordion-header {
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+            background: var(--bg-card);
+            transition: background 0.15s ease;
+        }
+
+        .accordion-header:hover {
+            background: var(--bg-card-hover);
+        }
+
+        .accordion-body {
+            padding: 20px;
+            border-top: 1px solid var(--border);
+            background: rgba(0, 0, 0, 0.15);
+            display: none;
+        }
+
+        .accordion-item.open .accordion-body {
+            display: block;
+        }
+
+        /* Callout */
+        .callout {
+            border-left: 4px solid var(--accent-blue);
+            background: rgba(59, 130, 246, 0.1);
+            padding: 16px 20px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 24px;
+            font-size: 0.95rem;
+        }
+
+        .callout.success {
+            border-color: var(--success);
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        /* Interactive Report Simulator */
+        .report-preview-box {
+            background: #ffffff;
+            color: #111827;
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 32px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+        }
+
+        .report-preview-box h2 {
+            color: #111827;
+        }
+
+        /* Print styles */
+        @media print {
+            body { background: #fff; color: #000; padding: 0; }
+            .tabs-nav, .hero-meta, .btn { display: none; }
+            .tab-pane { display: block !important; margin-bottom: 40px; }
+            .metric-card, .feature-card, .table-wrap { border: 1px solid #ccc; background: #fff; color: #000; }
+            code, pre { background: #f4f4f4; color: #000; border: 1px solid #ddd; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Header / Hero -->
+    <header class="hero">
+        <div class="container">
+            <div class="hero-badge">
+                <span>●</span> Project Status: Complete & Verified (61/61 Tests Passing)
+            </div>
+            <h1 class="hero-title">Automated Website Security Audit & Vulnerability Scanner</h1>
+            <p class="hero-subtitle">
+                An enterprise-grade, defensive web application vulnerability scanner, risk calculation engine, and reporting platform built with FastAPI, SQLAlchemy, and Docker.
+            </p>
+            <div class="hero-meta">
+                <span><strong>Target Framework:</strong> FastAPI + SQLAlchemy 2.0 + Pydantic v2</span>
+                <span><strong>Security Tests:</strong> 61 Passing Unit & Integration Tests</span>
+                <span><strong>Architecture:</strong> Modular, Allowlist-Scoped, Docker Ready</span>
+                <span><strong>Date:</strong> October 2026</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+
+        <!-- Navigation Tabs -->
+        <nav class="tabs-nav">
+            <button class="tab-btn active" onclick="openTab('tab-overview')">1. Executive Overview</button>
+            <button class="tab-btn" onclick="openTab('tab-modules')">2. Implemented Modules</button>
+            <button class="tab-btn" onclick="openTab('tab-report')">3. Live Report Preview</button>
+            <button class="tab-btn" onclick="openTab('tab-api')">4. API Endpoint Catalog</button>
+            <button class="tab-btn" onclick="openTab('tab-tests')">5. Test Verification (61 Tests)</button>
+            <button class="tab-btn" onclick="openTab('tab-deploy')">6. Deployment & Runbook</button>
+        </nav>
+
+        <!-- TAB 1: EXECUTIVE OVERVIEW -->
+        <section id="tab-overview" class="tab-pane active">
+            <div class="metrics-grid">
+                <div class="metric-card success">
+                    <div class="metric-title">Test Suite Health</div>
+                    <div class="metric-value">61 / 61</div>
+                    <div class="metric-desc">100% passing automated test cases</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-title">Security Modules</div>
+                    <div class="metric-value">5 Modules</div>
+                    <div class="metric-desc">TLS, API, Auth, JavaScript, Dependencies</div>
+                </div>
+                <div class="metric-card warning">
+                    <div class="metric-title">Deduplication Engine</div>
+                    <div class="metric-value">SHA-256</div>
+                    <div class="metric-desc">Deterministic fingerprinting & recurrence tracking</div>
+                </div>
+                <div class="metric-card success">
+                    <div class="metric-title">Deployment</div>
+                    <div class="metric-value">Docker</div>
+                    <div class="metric-desc">Security-hardened non-root container</div>
+                </div>
+            </div>
+
+            <div class="callout success">
+                <strong>Project Milestone Achieved:</strong> All 4 requested task pillars have been fully built, integrated, documented, and tested. The scanner supports passive, API, and full comprehensive audit profiles with live cancellation, per-host rate limiting, and multi-format report exports.
+            </div>
+
+            <h2 style="font-size: 1.4rem; margin-bottom: 16px;">System Architecture & Execution Flow</h2>
+            <div class="arch-diagram">
++---------------------------------------------------------------------------------------------------+
+|                                CLIENTS / USERS / CI/CD PIPELINES                                  |
+|   Web Browser (/dashboard)    |    Swagger OpenAPI (/docs)    |    Automated Cron / Webhooks     |
++-------------------------------------------------+-------------------------------------------------+
+                                                  |
+                                                  v  [JWT Bearer Auth & Owner Scope Enforcement]
++---------------------------------------------------------------------------------------------------+
+|                                      FASTAPI APPLICATION CORE                                     |
+|  * Auth & Projects Controller      * Scans & History Controller      * Schedules & Notifications  |
+|  * Target Allowlist Scope Guard    * Multi-format Report Generator   * Web UI Dashboard Endpoint  |
++-------------------------------------------------+-------------------------------------------------+
+                                                  |
+                                                  v
++---------------------------------------------------------------------------------------------------+
+|                                 UNIFIED SCANNER ORCHESTRATOR                                      |
+|  * Token Leaky-Bucket Rate Limiter (10 RPS)       * Thread-Safe In-Flight Cancellation Checks     |
+|  * Step-by-Step Progress Manager (0% -> 100%)     * Deterministic SHA-256 Fingerprinting Pipeline |
++-------------------------------------------------+-------------------------------------------------+
+                                                  |
+            +-------------------------------------+-------------------------------------+
+            |                                     |                                     |
+            v                                     v                                     v
++-----------------------+             +-----------------------+             +-----------------------+
+|      TLS SCANNER      |             |   API SECURITY AUDIT  |             |  AUTH & CONFIG AUDIT  |
+| * Handshake & Cipher  |             | * Security Headers    |             | * Sensitive Files     |
+| * Expiry & SAN Checks |             | * CORS Reflection     |             |   (/.env, /.git/HEAD) |
+| * HTTP -> HTTPS Redir |             | * OPTIONS Method Probe|             | * Cookie Attributes   |
+| * Strict Scope Recheck|             | * OpenAPI Doc Leakage |             | * Admin Portals Check |
++-----------------------+             +-----------------------+             +-----------------------+
+            |                                     |                                     |
+            +-------------------------------------+-------------------------------------+
+            |                                     |
+            v                                     v
++-----------------------+             +-----------------------+
+|  JAVASCRIPT ANALYSIS  |             |   DEPENDENCY SCANNER  |
+| * Leaked AWS/JWT Keys |             | * Server Header Probe |
+| * DOM XSS Sinks (eval)|             | * EOL Software (PHP)  |
+| * Outdated jQuery/Libs|             | * Manifest SBOM Audit |
++-----------------------+             +-----------------------+
+                                                  |
+                                                  v
++---------------------------------------------------------------------------------------------------+
+|                                  RISK SCORING & DEDUPLICATION                                     |
+|  * Match Fingerprint vs Past Target Scans -> Set is_duplicate, first_seen_at, last_seen_at        |
+|  * Calculate Finding Risk Score: Risk = Severity Weight (0-10) x Confidence (0-1)                 |
+|  * Calculate Overall Security Score: 100 - Severity Penalties (Discounting Duplicates)            |
+|  * Compute Letter Grade: A (90-100), B (80-89), C (70-79), D (60-69), F (<60)                      |
++-------------------------------------------------+-------------------------------------------------+
+                                                  |
+                                                  v
++---------------------------------------------------------------------------------------------------+
+|                                 PERSISTENCE & DISPATCH SERVICES                                   |
+|  * SQLAlchemy Relational DB (Users, Projects, Targets, Scans, Findings, Schedules, Notifications) |
+|  * Multi-format Exporters: Interactive HTML Report, GitHub Markdown, Structured JSON Audit       |
+|  * Webhook Alert Dispatcher (Sends real-time payloads to Slack, Teams, or SIEM endpoints)         |
++---------------------------------------------------------------------------------------------------+
+            </div>
+
+            <h2 style="font-size: 1.4rem; margin: 24px 0 16px 0;">Summary of Four Deliverable Pillars</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-header">
+                        <div class="feature-icon">🛡️</div>
+                        <h3>Pillar 1: Findings & Risk</h3>
+                    </div>
+                    <p>Engineered a deterministic SHA-256 fingerprinting pipeline for cross-scan defect correlation and recurring vulnerability tracking.</p>
+                    <ul class="feature-list">
+                        <li>Automatic recurrence tagging (is_duplicate, duplicate_of_id)</li>
+                        <li>Normalized URL & parameter hashing</li>
+                        <li>Severity weighting (Critical 10.0, High 7.5, Medium 5.0, Low 2.5)</li>
+                        <li>Security Score (0-100) and Letter Grade (A-F) formula</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-header">
+                        <div class="feature-icon">📊</div>
+                        <h3>Pillar 2: Dashboard & Reports</h3>
+                    </div>
+                    <p>Built full reporting pipeline producing self-contained HTML, GitHub-flavored Markdown, and structured JSON outputs.</p>
+                    <ul class="feature-list">
+                        <li>Live scan execution progress (0-100% and phase tracker)</li>
+                        <li>Responsive Web Dashboard (/dashboard) with score gauges</li>
+                        <li>Print & PDF friendly standalone HTML reports</li>
+                        <li>Scan history aggregation by project & target</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-header">
+                        <div class="feature-icon">⚡</div>
+                        <h3>Pillar 3: Safety, Controls & Deploy</h3>
+                    </div>
+                    <p>Integrated defensive execution safeguards to prevent runaway scans, target disruption, or container exploitation.</p>
+                    <ul class="feature-list">
+                        <li>Strict exact-host scope verification before every socket call</li>
+                        <li>Per-host leaky bucket rate limiter (default 10 RPS)</li>
+                        <li>Thread-safe scan cancellation endpoint (/stop)</li>
+                        <li>Hardened multi-stage Dockerfile with unprivileged user</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-header">
+                        <div class="feature-icon">🔍</div>
+                        <h3>Pillar 4: Advanced Scanners</h3>
+                    </div>
+                    <p>Expanded from basic TLS into a full multi-vector security scanner covering APIs, auth, script security, and dependencies.</p>
+                    <ul class="feature-list">
+                        <li>API Security: CSP, HSTS, X-Frame, CORS, TRACE/OPTIONS</li>
+                        <li>Auth Audit: Cookie flags (Secure, HttpOnly, SameSite), .env</li>
+                        <li>JavaScript: Leaked AWS/JWT secrets, eval/document.write</li>
+                        <li>Dependencies: Server banners, EOL software, SBOM audit</li>
+                        <li>Scheduled Scans (hourly/daily/weekly) & Webhook alerts</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: IMPLEMENTED MODULES -->
+        <section id="tab-modules" class="tab-pane">
+            <h2 style="font-size: 1.4rem; margin-bottom: 20px;">Codebase Deep Dive: Architectural Modules</h2>
+
+            <div class="accordion-item open">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <div>
+                        <strong>1. Finding Fingerprint & Deduplication Engine</strong>
+                        <span style="color: var(--text-muted); font-size: 0.85rem; margin-left: 10px;">app/core/fingerprint.py & app/core/scoring.py</span>
+                    </div>
+                    <span class="badge badge-success">Implemented</span>
+                </div>
+                <div class="accordion-body">
+                    <p style="margin-bottom: 12px; color: var(--text-secondary);">
+                        Each vulnerability is assigned a deterministic fingerprint calculated by normalizing the scheme, stripping default ports (80/443), ordering query parameters alphabetically, and generating a SHA-256 hash. When a subsequent scan runs on the same target, findings with matching fingerprints are recognized as duplicate instances of the same underlying defect:
+                    </p>
+                    <pre><code>def compute_finding_fingerprint(category: str, title: str, affected_url: str, discriminator: str = "") -> str:
+    norm_cat = category.strip().lower()
+    norm_title = title.strip().lower()
+    norm_url = normalize_url_for_fingerprint(affected_url)
+    norm_disc = discriminator.strip().lower()
+
+    payload = f"{norm_cat}|{norm_title}|{norm_url}|{norm_disc}"
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()</code></pre>
+                    <p style="margin-top: 12px; color: var(--text-secondary);">
+                        <strong>Security Scoring:</strong> The overall score starts at 100.0. Penalties are deducted for unique open findings (Critical: 25, High: 15, Medium: 8, Low: 3), scaled by confidence. Duplicate findings are discounted from double deductions.
+                    </p>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <div>
+                        <strong>2. API Security Scanner</strong>
+                        <span style="color: var(--text-muted); font-size: 0.85rem; margin-left: 10px;">app/scanners/api_security.py</span>
+                    </div>
+                    <span class="badge badge-success">Implemented</span>
+                </div>
+                <div class="accordion-body">
+                    <p style="color: var(--text-secondary); margin-bottom: 12px;">
+                        Performs non-destructive checks against API endpoints and headers:
+                    </p>
+                    <ul class="feature-list">
+                        <li><strong>Missing Security Headers:</strong> Audits CSP, HSTS, X-Content-Type-Options (nosniff), X-Frame-Options (DENY/SAMEORIGIN), and Referrer-Policy.</li>
+                        <li><strong>Weak CSP Directives:</strong> Detects dangerous <code>'unsafe-inline'</code> and <code>'unsafe-eval'</code> script directives.</li>
+                        <li><strong>CORS Misconfiguration:</strong> Probes with an unauthorized origin header to detect wildcard origin reflection combined with <code>Access-Control-Allow-Credentials: true</code>.</li>
+                        <li><strong>Dangerous HTTP Methods:</strong> Sends <code>OPTIONS</code> probe to flag debugging or unsafe methods like <code>TRACE</code> and <code>TRACK</code>.</li>
+                        <li><strong>Exposed API Documentation:</strong> Probes for unauthenticated disclosure of <code>/openapi.json</code>, <code>/swagger.json</code>, and <code>/api-docs</code>.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <div>
+                        <strong>3. Controlled Authentication & Authorization Audit</strong>
+                        <span style="color: var(--text-muted); font-size: 0.85rem; margin-left: 10px;">app/scanners/auth_audit.py</span>
+                    </div>
+                    <span class="badge badge-success">Implemented</span>
+                </div>
+                <div class="accordion-body">
+                    <p style="color: var(--text-secondary); margin-bottom: 12px;">
+                        Detects credential leaks, session configuration flaws, and exposed management interfaces:
+                    </p>
+                    <ul class="feature-list">
+                        <li><strong>Sensitive File Exposure:</strong> Checks for public accessibility of <code>/.env</code>, <code>/.git/HEAD</code>, and <code>/config.json</code> with signature verification.</li>
+                        <li><strong>Cookie Flag Auditing:</strong> Inspects all <code>Set-Cookie</code> headers to ensure <code>HttpOnly</code> (XSS mitigation), <code>Secure</code> (TLS protection), and <code>SameSite</code> (CSRF defense) are configured.</li>
+                        <li><strong>Admin Portal Exposure:</strong> Detects public accessibility of administrative login panels (<code>/admin</code>, <code>/administrator</code>).</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <div>
+                        <strong>4. JavaScript Analysis & Secret Harvesting Defense</strong>
+                        <span style="color: var(--text-muted); font-size: 0.85rem; margin-left: 10px;">app/scanners/javascript.py</span>
+                    </div>
+                    <span class="badge badge-success">Implemented</span>
+                </div>
+                <div class="accordion-body">
+                    <p style="color: var(--text-secondary); margin-bottom: 12px;">
+                        Analyzes inline script tags and same-host external JavaScript bundles:
+                    </p>
+                    <ul class="feature-list">
+                        <li><strong>Secret & Token Detection:</strong> Scans for embedded AWS Access Keys (<code>AKIA...</code>), JSON Web Tokens (<code>eyJ...</code>), and hardcoded API tokens.</li>
+                        <li><strong>Dangerous DOM Sinks:</strong> Flags use of <code>eval()</code> and <code>document.write()</code> that create DOM-based Cross-Site Scripting vulnerabilities.</li>
+                        <li><strong>Vulnerable Client Libraries:</strong> Identifies outdated libraries including jQuery &lt; 3.5.0 (CVE-2020-11022), Lodash &lt; 4.17.21, and End-of-Life AngularJS 1.x.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <div>
+                        <strong>5. Dependency Scanning & Technology Fingerprinting</strong>
+                        <span style="color: var(--text-muted); font-size: 0.85rem; margin-left: 10px;">app/scanners/dependencies.py</span>
+                    </div>
+                    <span class="badge badge-success">Implemented</span>
+                </div>
+                <div class="accordion-body">
+                    <p style="color: var(--text-secondary); margin-bottom: 12px;">
+                        Passive and SBOM manifest auditing:
+                    </p>
+                    <ul class="feature-list">
+                        <li><strong>Information Disclosure:</strong> Flags granular server version strings in <code>Server</code> and <code>X-Powered-By</code> headers.</li>
+                        <li><strong>End-of-Life Server Software:</strong> Detects unsupported servers (Apache 2.2, PHP 5.x/7.x).</li>
+                        <li><strong>Manifest SBOM Auditing:</strong> Audits Python <code>requirements.txt</code> against security advisories for vulnerable packages (e.g. urllib3, requests, Django, Flask).</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <div>
+                        <strong>6. Scheduling & Webhook Notifications</strong>
+                        <span style="color: var(--text-muted); font-size: 0.85rem; margin-left: 10px;">app/services/scheduler.py & app/services/notifications.py</span>
+                    </div>
+                    <span class="badge badge-success">Implemented</span>
+                </div>
+                <div class="accordion-body">
+                    <p style="color: var(--text-secondary); margin-bottom: 12px;">
+                        Continuous automated security operations:
+                    </p>
+                    <ul class="feature-list">
+                        <li><strong>Recurring Schedules:</strong> Supports hourly, daily, weekly, and monthly recurring scans via <code>/api/schedules</code>.</li>
+                        <li><strong>Webhook Dispatcher:</strong> Sends formatted alert payloads to configured URLs upon scan completion or when critical/high severity vulnerabilities are detected.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: LIVE REPORT PREVIEW -->
+        <section id="tab-report" class="tab-pane">
+            <h2 style="font-size: 1.4rem; margin-bottom: 16px;">Interactive Sample Security Report</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 24px;">
+                Below is an interactive rendering of the standalone HTML report generated by <code>GET /api/scans/{id}/report?format=html</code>.
+            </p>
+
+            <div class="report-preview-box">
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f3f4f6; padding-bottom: 20px; margin-bottom: 24px;">
+                    <div>
+                        <h1 style="font-size: 1.7rem; font-weight: 800; color: #111827; margin-bottom: 6px;">Security Audit Report</h1>
+                        <div style="font-size: 0.95rem; color: #4b5563;">
+                            <strong>Target:</strong> <a href="http://localhost:8000" style="color: #2563eb; text-decoration: none;">http://localhost:8000</a>
+                        </div>
+                        <div style="font-size: 0.85rem; color: #6b7280; margin-top: 4px;">
+                            Scan ID: #42 &bull; Profile: <code>full</code> &bull; Date: 2026-10-16 12:45 UTC
+                        </div>
+                    </div>
+                    <div style="text-align: center; border: 4px solid #f59e0b; border-radius: 50%; width: 90px; height: 90px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                        <span style="font-size: 1.8rem; font-weight: 800; color: #f59e0b; line-height: 1;">B</span>
+                        <span style="font-size: 0.75rem; color: #6b7280; font-weight: 600;">85.0 / 100</span>
+                    </div>
+                </div>
+
+                <!-- Report Summary Grid -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 12px; margin-bottom: 28px;">
+                    <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px; text-align: center;">
+                        <div style="font-size: 1.4rem; font-weight: 800; color: #111827;">4</div>
+                        <div style="font-size: 0.75rem; color: #6b7280; text-transform: uppercase;">Total Findings</div>
+                    </div>
+                    <div style="background: #fef2f2; border: 1px solid #fee2e2; border-radius: 8px; padding: 12px; text-align: center;">
+                        <div style="font-size: 1.4rem; font-weight: 800; color: #ef4444;">0</div>
+                        <div style="font-size: 0.75rem; color: #991b1b; text-transform: uppercase;">Critical</div>
+                    </div>
+                    <div style="background: #fff7ed; border: 1px solid #ffedd5; border-radius: 8px; padding: 12px; text-align: center;">
+                        <div style="font-size: 1.4rem; font-weight: 800; color: #ea580c;">1</div>
+                        <div style="font-size: 0.75rem; color: #9a3412; text-transform: uppercase;">High</div>
+                    </div>
+                    <div style="background: #fffbeb; border: 1px solid #fef3c7; border-radius: 8px; padding: 12px; text-align: center;">
+                        <div style="font-size: 1.4rem; font-weight: 800; color: #d97706;">1</div>
+                        <div style="font-size: 0.75rem; color: #92400e; text-transform: uppercase;">Medium</div>
+                    </div>
+                    <div style="background: #eff6ff; border: 1px solid #dbeafe; border-radius: 8px; padding: 12px; text-align: center;">
+                        <div style="font-size: 1.4rem; font-weight: 800; color: #2563eb;">2</div>
+                        <div style="font-size: 0.75rem; color: #1e40af; text-transform: uppercase;">Low</div>
+                    </div>
+                </div>
+
+                <h3 style="font-size: 1.2rem; font-weight: 700; color: #111827; margin-bottom: 16px;">Vulnerability Findings (Sample)</h3>
+
+                <!-- Sample Finding 1 -->
+                <div style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <div style="font-size: 1.05rem; font-weight: 700; color: #111827;">#1. Insecure CORS: Wildcard Origin With Credentials Allowed</div>
+                        <span style="background: #f97316; color: #fff; font-size: 0.75rem; font-weight: 800; padding: 3px 8px; border-radius: 9999px;">HIGH</span>
+                    </div>
+                    <div style="font-size: 0.8rem; color: #6b7280; margin-bottom: 10px;">
+                        <strong>Category:</strong> api &bull; <strong>Risk Score:</strong> 7.12 &bull; <strong>Confidence:</strong> 95% &bull; <strong>Fingerprint:</strong> <code>c98e1476b8...</code>
+                    </div>
+                    <p style="font-size: 0.9rem; color: #374151; margin-bottom: 10px;">
+                        The server returns Access-Control-Allow-Origin: * together with Access-Control-Allow-Credentials: true.
+                    </p>
+                    <div style="background: #f8fafc; border-left: 4px solid #f97316; padding: 10px 12px; font-family: monospace; font-size: 0.8rem; color: #334155; margin-bottom: 10px;">
+                        Origin requested: https://attacker.example.com; Allow-Origin: *; Allow-Credentials: true
+                    </div>
+                    <div style="font-size: 0.85rem; color: #111827; margin-bottom: 6px;">
+                        <strong>Impact:</strong> Malicious cross-origin scripts can execute authenticated actions on behalf of victims.
+                    </div>
+                    <div style="font-size: 0.85rem; color: #065f46; background: #ecfdf5; padding: 8px 12px; border-radius: 6px;">
+                        <strong>Remediation:</strong> Never combine wildcard origins with credentials. Explicitly whitelist trusted origins.
+                    </div>
+                </div>
+
+                <!-- Sample Finding 2 -->
+                <div style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <div style="font-size: 1.05rem; font-weight: 700; color: #111827;">#2. Missing Content-Security-Policy (CSP) Header</div>
+                        <span style="background: #f59e0b; color: #fff; font-size: 0.75rem; font-weight: 800; padding: 3px 8px; border-radius: 9999px;">MEDIUM</span>
+                    </div>
+                    <div style="font-size: 0.8rem; color: #6b7280; margin-bottom: 10px;">
+                        <strong>Category:</strong> api &bull; <strong>Risk Score:</strong> 4.75 &bull; <strong>Confidence:</strong> 95% &bull; <strong>Fingerprint:</strong> <code>8f10ae4d22...</code>
+                    </div>
+                    <p style="font-size: 0.9rem; color: #374151; margin-bottom: 10px;">
+                        The web application response does not include a Content-Security-Policy header.
+                    </p>
+                    <div style="background: #f8fafc; border-left: 4px solid #f59e0b; padding: 10px 12px; font-family: monospace; font-size: 0.8rem; color: #334155; margin-bottom: 10px;">
+                        HTTP response header 'Content-Security-Policy' was not present.
+                    </div>
+                    <div style="font-size: 0.85rem; color: #111827; margin-bottom: 6px;">
+                        <strong>Impact:</strong> Reduces defense-in-depth against client-side script injection and cross-site scripting (XSS).
+                    </div>
+                    <div style="font-size: 0.85rem; color: #065f46; background: #ecfdf5; padding: 8px 12px; border-radius: 6px;">
+                        <strong>Remediation:</strong> Deploy a restrictive Content-Security-Policy header defining trusted script and style sources.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 4: API ENDPOINT CATALOG -->
+        <section id="tab-api" class="tab-pane">
+            <h2 style="font-size: 1.4rem; margin-bottom: 16px;">REST API Endpoint Catalog</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 20px;">
+                Complete list of REST endpoints implemented in FastAPI, documented with Swagger UI at <code>/docs</code>.
+            </p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Method</th>
+                            <th>Endpoint</th>
+                            <th>Category</th>
+                            <th>Description</th>
+                            <th>Auth Required</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="badge badge-success">POST</span></td>
+                            <td><code>/api/auth/register</code></td>
+                            <td>Auth</td>
+                            <td>Create a user account with Argon2 password hashing</td>
+                            <td>No</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge badge-success">POST</span></td>
+                            <td><code>/api/auth/login</code></td>
+                            <td>Auth</td>
+                            <td>Authenticate and receive short-lived JWT token</td>
+                            <td>No</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge badge-low">GET</span></td>
+                            <td><code>/api/auth/me</code></td>
+                            <td>Auth</td>
+                            <td>Get currently authenticated user identity</td>
+                            <td>Yes (Bearer)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge badge-success">POST</span></td>
+                            <td><code>/api/targets/validate</code></td>
+                            <td>Targets</td>
+                            <td>Pre-flight allowlist validation without connecting</td>
+                            <td>Yes (Bearer)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge badge-success">POST</span></td>
+                            <td><code>/api/projects</code></td>
+                            <td>Projects</td>
+                            <td>Create a scoped security audit project</td>
+                            <td>Yes (Bearer)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge badge-low">GET</span></td>
+                            <td><code>/api/projects</code></td>
+                            <td>Projects</td>
+                            <td>List user's authorized projects</td>
+                            <td>Yes (Bearer)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge badge-success">POST</span></td>
+                            <td><code>/api/projects/{id}/targets</code></td>
+                            <td>Targets</td>
+                            <td>Register an allowlisted target URL under a project</td>
+                            <td>Yes (Bearer)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge badge-success">POST</span></td>
+                            <td><code>/api/scans</code></td>
+                            <td>Scans</td>
+                            <td>Create a queued scan record (passive, api, full)</td>
+                            <td>Yes (Bearer)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge badge-success">POST</span></td>
+                            <td><code>/api/scans/{id}/run</code></td>
+                            <td>Scans</td>
+                            <td>Execute multi-phase scanner with progress and deduplication</td>
+                            <td>Yes (Bearer)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge badge-critical">POST</span></td>
+                            <td><code>/api/scans/{id}/stop</code></td>
+                            <td>Scans</td>
+                            <td>Gracefully stop and cancel in-flight scan</td>
+                            <td>Yes (Bearer)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge badge-low">GET</span></td>
+                            <td><code>/api/scans/{id}/progress</code></td>
+                            <td>Scans</td>
+                            <td>Real-time progress % and current execution phase</td>
+                            <td>Yes (Bearer)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge badge-low">GET</span></td>
+                            <td><code>/api/scans/{id}/findings</code></td>
+                            <td>Findings</td>
+                            <td>List evidence-backed findings with fingerprints</td>
+                            <td>Yes (Bearer)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge badge-low">GET</span></td>
+                            <td><code>/api/scans/{id}/report</code></td>
+                            <td>Reports</td>
+                            <td>Export report in HTML, Markdown, or JSON (?format=...)</td>
+                            <td>Yes (Bearer)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge badge-low">GET</span></td>
+                            <td><code>/api/dashboard/summary</code></td>
+                            <td>Dashboard</td>
+                            <td>High-level stats, average score, and recent scan history</td>
+                            <td>Yes (Bearer)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge badge-success">POST</span></td>
+                            <td><code>/api/schedules</code></td>
+                            <td>Schedules</td>
+                            <td>Create recurring automated scan (hourly, daily, weekly)</td>
+                            <td>Yes (Bearer)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge badge-critical">DELETE</span></td>
+                            <td><code>/api/schedules/{id}</code></td>
+                            <td>Schedules</td>
+                            <td>Remove a scheduled scan job</td>
+                            <td>Yes (Bearer)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge badge-success">POST</span></td>
+                            <td><code>/api/notifications</code></td>
+                            <td>Notifications</td>
+                            <td>Register a webhook destination for security alerts</td>
+                            <td>Yes (Bearer)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge badge-low">GET</span></td>
+                            <td><code>/dashboard</code></td>
+                            <td>Web UI</td>
+                            <td>Interactive browser security posture dashboard</td>
+                            <td>No</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- TAB 5: TEST VERIFICATION -->
+        <section id="tab-tests" class="tab-pane">
+            <h2 style="font-size: 1.4rem; margin-bottom: 16px;">Automated Quality Assurance: 61 Passing Tests</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 20px;">
+                The test suite was expanded from the initial 31 baseline tests to <strong>61 comprehensive tests</strong> across 8 test suites.
+            </p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Test Module</th>
+                            <th>Cases</th>
+                            <th>Features Tested</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>tests/test_fingerprint_and_risk.py</code></td>
+                            <td>8</td>
+                            <td>URL normalization, SHA-256 fingerprinting, risk weights, scoring penalties, grades A-F</td>
+                            <td><span class="badge badge-success">PASSED</span></td>
+                        </tr>
+                        <tr>
+                            <td><code>tests/test_advanced_scanners.py</code></td>
+                            <td>10</td>
+                            <td>API headers (CSP/HSTS), CORS reflection, TRACE methods, cookie flags, JS secrets, SBOM</td>
+                            <td><span class="badge badge-success">PASSED</span></td>
+                        </tr>
+                        <tr>
+                            <td><code>tests/test_dashboard_and_reports.py</code></td>
+                            <td>5</td>
+                            <td>Progress monitoring, HTML/Markdown/JSON report generation, dashboard metrics</td>
+                            <td><span class="badge badge-success">PASSED</span></td>
+                        </tr>
+                        <tr>
+                            <td><code>tests/test_controls_and_safety.py</code></td>
+                            <td>3</td>
+                            <td>Leaky-bucket host rate limiter, cancellation registry, idempotent /stop endpoint</td>
+                            <td><span class="badge badge-success">PASSED</span></td>
+                        </tr>
+                        <tr>
+                            <td><code>tests/test_schedule_and_notifications.py</code></td>
+                            <td>4</td>
+                            <td>Recurring scan schedule CRUD, next-run computation, webhook alerts, severity filters</td>
+                            <td><span class="badge badge-success">PASSED</span></td>
+                        </tr>
+                        <tr>
+                            <td><code>tests/test_api.py</code></td>
+                            <td>23</td>
+                            <td>Registration, authentication, project ownership, target scoping, scan lifecycle</td>
+                            <td><span class="badge badge-success">PASSED</span></td>
+                        </tr>
+                        <tr>
+                            <td><code>tests/test_scope.py</code></td>
+                            <td>4</td>
+                            <td>Exact host allowlisting, case-insensitivity, subdomain and partial match rejection</td>
+                            <td><span class="badge badge-success">PASSED</span></td>
+                        </tr>
+                        <tr>
+                            <td><code>tests/test_tls_scanner.py</code></td>
+                            <td>4</td>
+                            <td>Out-of-scope connection aborts, port 443 defaults, HTTPS redirect handling</td>
+                            <td><span class="badge badge-success">PASSED</span></td>
+                        </tr>
+                        <tr style="background: rgba(16, 185, 129, 0.1); font-weight: bold;">
+                            <td>Total Test Suite</td>
+                            <td>61</td>
+                            <td>Complete Backend, Scanners, Risk Engine, Reporting & Deployment</td>
+                            <td><span class="badge badge-success">61 PASSED (0 FAILURES)</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3 style="font-size: 1.15rem; margin-bottom: 12px;">Pytest Execution Output</h3>
+            <pre><code>$ py -m pytest
+============================= test session starts =============================
+platform win32 -- Python 3.14.5, pytest-9.1.1, pluggy-1.7.0
+rootdir: C:\Users\Taha\OneDrive\Desktop\was-main
+collected 61 items
+
+tests\test_advanced_scanners.py ..........                               [ 16%]
+tests\test_api.py .......................                                [ 54%]
+tests\test_controls_and_safety.py ...                                    [ 59%]
+tests\test_dashboard_and_reports.py .....                                [ 67%]
+tests\test_fingerprint_and_risk.py ........                              [ 80%]
+tests\test_schedule_and_notifications.py ....                            [ 86%]
+tests\test_scope.py ....                                                 [ 93%]
+tests\test_tls_scanner.py ....                                           [100%]
+
+======================= 61 passed, 1 warning in 14.88s ========================</code></pre>
+        </section>
+
+        <!-- TAB 6: DEPLOYMENT & RUNBOOK -->
+        <section id="tab-deploy" class="tab-pane">
+            <h2 style="font-size: 1.4rem; margin-bottom: 16px;">Deployment & Operational Runbook</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 24px;">
+                Instructions for running tests, starting the local development server, or deploying via hardened Docker containers.
+            </p>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-header">
+                        <div class="feature-icon">💻</div>
+                        <h3>Local Execution (Python)</h3>
+                    </div>
+                    <p>Run locally using Python virtual environment:</p>
+                    <pre><code># 1. Run automated tests
+py -m pytest -q
+
+# 2. Start the API server
+cd backend
+py -m uvicorn app.main:app --reload</code></pre>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary);">
+                        Swagger UI: <code>http://127.0.0.1:8000/docs</code><br>
+                        Web Dashboard: <code>http://127.0.0.1:8000/dashboard</code>
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-header">
+                        <div class="feature-icon">🐳</div>
+                        <h3>Docker Container Deployment</h3>
+                    </div>
+                    <p>Deploy using the provided multi-stage, non-root Docker setup:</p>
+                    <pre><code># 1. Build and start in detached mode
+docker compose up -d --build
+
+# 2. Check health status
+docker ps
+
+# 3. View live scanner logs
+docker logs -f security-scanner-api</code></pre>
+                </div>
+            </div>
+
+            <h3 style="font-size: 1.2rem; margin: 24px 0 12px 0;">Environment Configuration Reference</h3>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Variable</th>
+                            <th>Default</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>SCANNER_ALLOWED_HOSTS</code></td>
+                            <td><code>localhost,127.0.0.1</code></td>
+                            <td>Comma-separated strict allowlist of authorized hostnames. Protects against out-of-scope scanning.</td>
+                        </tr>
+                        <tr>
+                            <td><code>SCANNER_SECRET_KEY</code></td>
+                            <td><code>(dev-only default)</code></td>
+                            <td>Random secret key for signing short-lived JWT access tokens.</td>
+                        </tr>
+                        <tr>
+                            <td><code>SCANNER_TIMEOUT_SECONDS</code></td>
+                            <td><code>4.0</code></td>
+                            <td>Maximum socket/HTTP timeout per network check.</td>
+                        </tr>
+                        <tr>
+                            <td><code>SCANNER_RATE_LIMIT_RPS</code></td>
+                            <td><code>10.0</code></td>
+                            <td>Maximum requests per second per target host to protect targets from overload.</td>
+                        </tr>
+                        <tr>
+                            <td><code>DATABASE_URL</code></td>
+                            <td><code>sqlite:///./security_scanner.db</code></td>
+                            <td>SQLAlchemy database connection string.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Script for Tab Navigation and Accordions -->
+    <script>
+        function openTab(tabId) {
+            document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        function toggleAccordion(headerEl) {
+            const item = headerEl.parentElement;
+            item.classList.toggle('open');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>Web Base Authentication System — CAIPSD Baghdad-ul-Jadeed Campus</title>
+  
+  <!-- Tailwind CSS Play CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- External Stylesheet Fallback -->
+  <link rel="stylesheet" href="assets/audit-styles.css?v=2.8.0">
+
+  <style>
+    :root {
+      --bg-gradient: radial-gradient(circle at 50% 0%, #0d2757 0%, #071738 50%, #040c1e 100%);
+      --card-bg: rgba(10, 25, 52, 0.9);
+      --card-border: rgba(96, 165, 250, 0.22);
+      --card-radius: 20px;
+      --card-shadow: 0 20px 45px -15px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(96, 165, 250, 0.16);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      overflow-x: hidden !important;
+      width: 100% !important;
+      max-width: 100vw !important;
+      -webkit-text-size-adjust: 100%;
+      touch-action: manipulation;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #061226 !important;
+      background: radial-gradient(circle at 50% 0%, #0d2757 0%, #071738 50%, #040c1e 100%) !important;
+      background-attachment: fixed !important;
+      color: #f1f5f9 !important;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button, a, input, select {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Hide scrollbars for swipeable chip bars while keeping swipe functional */
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    /* Custom Scrollbars */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #040c1e; }
+    ::-webkit-scrollbar-thumb { background: #1e3a8a; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #2563eb; }
+
+    /* Elevated Glass Cards */
+    .premium-card {
+      background: var(--card-bg) !important;
+      border-radius: var(--card-radius) !important;
+      box-shadow: var(--card-shadow) !important;
+      border: 1px solid var(--card-border) !important;
+      backdrop-filter: blur(16px);
+      width: 100% !important;
+      max-width: 100% !important;
+    }
+
+    /* Primary Gradient Button */
+    .btn-primary-blue {
+      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
+      color: #ffffff !important;
+      font-weight: 700 !important;
+      border-radius: 12px !important;
+      border: 1px solid rgba(255, 255, 255, 0.22) !important;
+      box-shadow: 0 8px 24px -4px rgba(37, 99, 235, 0.45) !important;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+    .btn-primary-blue:hover {
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
+      box-shadow: 0 12px 28px -4px rgba(37, 99, 235, 0.65) !important;
+      transform: translateY(-1px);
+    }
+
+    /* Quick Suggestion Chips */
+    .quick-chip {
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 600;
+      background: rgba(14, 34, 70, 0.85);
+      border: 1px solid rgba(96, 165, 250, 0.25);
+      color: #cbd5e1;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .quick-chip:hover {
+      background: rgba(37, 99, 235, 0.35);
+      border-color: rgba(96, 165, 250, 0.6);
+      color: #ffffff;
+      transform: translateY(-1px);
+    }
+
+    /* Status Badges */
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.025em;
+    }
+    .badge-critical { background: rgba(239, 68, 68, 0.18); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.38); }
+    .badge-high { background: rgba(249, 115, 22, 0.18); color: #fb923c; border: 1px solid rgba(249, 115, 22, 0.38); }
+    .badge-medium { background: rgba(245, 158, 11, 0.18); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.38); }
+    .badge-low { background: rgba(59, 130, 246, 0.18); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.38); }
+    .badge-success { background: rgba(16, 185, 129, 0.18); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.38); }
+
+    /* Checkpoint Phase Badges */
+    .phase-badge-item {
+      padding: 8px 6px;
+      border-radius: 10px;
+      border: 1px solid rgba(96, 165, 250, 0.16);
+      background: rgba(10, 25, 52, 0.65);
+      color: #94a3b8;
+      font-size: 10px;
+      transition: all 0.25s ease;
+      text-align: center;
+    }
+    .phase-badge-item.active {
+      border-color: #38bdf8;
+      background: rgba(56, 189, 248, 0.18);
+      color: #38bdf8;
+      box-shadow: 0 0 14px rgba(56, 189, 248, 0.3);
+    }
+    .phase-badge-item.completed {
+      border-color: #34d399;
+      background: rgba(52, 211, 153, 0.14);
+      color: #34d399;
+    }
+
+    /* Toast Notification */
+    #toast-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      left: 20px;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      pointer-events: none;
+      align-items: center;
+    }
+    @media (min-width: 640px) {
+      #toast-container {
+        left: auto;
+        align-items: flex-end;
+      }
+    }
+    .toast-msg {
+      background: #0f2347;
+      border: 1px solid rgba(96, 165, 250, 0.4);
+      color: #ffffff;
+      padding: 10px 16px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 500;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      pointer-events: auto;
+      max-width: 90vw;
+      animation: slideInToast 0.25s ease-out;
+    }
+    @keyframes slideInToast {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-[#061226] text-slate-100 overflow-x-hidden w-full">
+
+  <!-- Top Global Navigation Header (Mobile-Optimized Single Row) -->
+  <header class="bg-[#071738]/95 backdrop-blur-xl border-b border-blue-500/20 px-3 sm:px-8 py-2.5 sm:py-3 sticky top-0 z-40 shadow-lg shadow-black/20 w-full">
+    <div class="max-w-6xl mx-auto flex items-center justify-between gap-2 w-full">
+      
+      <!-- Brand Logo & Title -->
+      <div class="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+        <div class="relative w-8 h-8 sm:w-10 sm:h-10 flex-shrink-0" style="width: 38px; height: 38px; min-width: 38px; max-width: 38px; max-height: 38px;">
+          <img src="assets/logo.png" alt="CAIPSD Logo" style="width: 100%; height: 100%; max-width: 38px; max-height: 38px; object-fit: contain;" class="w-full h-full object-contain rounded-xl bg-white/10 p-0.5 sm:p-1 border border-white/10 shadow-sm" onerror="this.style.display='none'; document.getElementById('logo-shield-svg').classList.remove('hidden');">
+          <div id="logo-shield-svg" class="hidden w-full h-full rounded-xl bg-gradient-to-br from-blue-700 to-indigo-900 border border-blue-400/40 flex items-center justify-center text-cyan-300 shadow-md">
+            <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+          </div>
+        </div>
+        <div class="min-w-0 flex-1">
+          <div class="flex items-center gap-1.5">
+            <h1 class="text-xs sm:text-base font-bold text-white tracking-tight truncate leading-tight">Web Base Authentication System</h1>
+            <span class="text-[8px] sm:text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.2 rounded-full bg-blue-500/20 text-blue-300 border border-blue-400/30 flex-shrink-0">Official</span>
+          </div>
+          <p class="text-[10px] sm:text-xs text-blue-200/75 font-medium truncate leading-tight mt-0.5">CAIPSD · The Islamia University of Bahawalpur</p>
+        </div>
+      </div>
+
+      <!-- Header Right: HTTPS Badge, Mobile QR & Engine Status -->
+      <div class="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
+        <button onclick="openHttpsModal()" title="HTTPS Security Status & Certificate Guide" class="inline-flex items-center gap-1 px-2 sm:px-3 py-1.5 rounded-xl bg-emerald-950/70 hover:bg-emerald-900/80 border border-emerald-400/40 text-emerald-300 text-[10px] sm:text-xs font-semibold transition cursor-pointer">
+          <span>🔒</span>
+          <span class="hidden sm:inline">HTTPS SSL</span>
+          <span class="text-[9px] px-1 py-0.2 rounded bg-emerald-500/25 text-emerald-200">8443</span>
+        </button>
+
+        <button onclick="openMobileModal()" title="Run on Mobile Phone" class="inline-flex items-center gap-1 px-2 sm:px-3 py-1.5 rounded-xl bg-blue-600/20 hover:bg-blue-600/40 border border-blue-400/30 text-blue-300 text-[11px] sm:text-xs font-semibold transition cursor-pointer">
+          <svg class="w-3.5 h-3.5 text-cyan-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+          <span class="hidden sm:inline">Mobile QR</span>
+        </button>
+
+        <div class="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full bg-emerald-500/15 border border-emerald-400/30 text-emerald-300 text-[10px] sm:text-xs font-semibold shadow-sm">
+          <span class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span>10 RPS</span>
+        </div>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Main View: Website Security Audit Scanner -->
+  <main id="view-scanner" class="flex-1 max-w-6xl w-full mx-auto px-3 py-4 sm:p-8 space-y-6 sm:space-y-8 overflow-x-hidden">
+
+    <!-- Hero Search & Command Section -->
+    <section class="text-center space-y-3 sm:space-y-4 pt-2 sm:pt-6 w-full">
+      <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-500/15 border border-blue-400/30 text-blue-200 text-[11px] sm:text-xs font-semibold max-w-full truncate">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse flex-shrink-0"></span>
+        <span class="truncate">Dynamic Security Engine Ready • Multi-Tier Vulnerability Analysis</span>
+      </div>
+
+      <h2 class="text-2xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight drop-shadow-md leading-tight px-1">
+        Automated Website Security & Stack Scanner
+      </h2>
+      <p class="text-xs sm:text-base text-slate-300 max-w-2xl mx-auto font-normal leading-relaxed px-2">
+        Enter any website URL to audit security vulnerabilities, detect full technology stack (Server, Framework, Backend & Database), inspect encryption, and generate instant remediation guides.
+      </p>
+
+      <!-- Search Input Container (Touch-Friendly Responsive) -->
+      <div class="max-w-3xl mx-auto bg-[#0b1c38]/95 p-2 rounded-2xl shadow-2xl shadow-black/50 border border-blue-500/30 backdrop-blur-xl flex flex-col sm:flex-row items-stretch sm:items-center gap-2 mt-4 sm:mt-6 w-full">
+        <div class="flex-1 flex items-center gap-2 px-2.5 py-1.5 w-full bg-[#08152b]/60 sm:bg-transparent rounded-xl border sm:border-0 border-blue-500/20">
+          <svg class="w-4 h-4 sm:w-5 sm:h-5 text-cyan-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/></svg>
+          <input id="target-url-input" type="text" value="https://www.iub.edu.pk/" placeholder="Enter website URL (e.g., daraz.pk)" class="w-full text-base sm:text-sm font-medium text-white focus:outline-none placeholder-slate-400 bg-transparent font-mono min-w-0">
+        </div>
+
+        <div class="w-full sm:w-60">
+          <select id="scan-profile-select" class="w-full py-2.5 px-3 bg-[#112445] border border-blue-400/30 rounded-xl text-xs font-semibold text-slate-200 focus:outline-none focus:border-blue-400 cursor-pointer min-h-[42px]">
+            <option value="full">Full Comprehensive Audit</option>
+            <option value="stack">Technology Stack & Architecture</option>
+            <option value="api">API Security & Headers</option>
+            <option value="auth">Auth & Sensitive Files</option>
+            <option value="passive">Passive TLS Check</option>
+          </select>
+        </div>
+
+        <button id="start-quick-scan-btn" class="btn-primary-blue w-full sm:w-auto px-6 py-3 whitespace-nowrap text-sm font-bold min-h-[44px]">
+          <svg class="w-4 h-4 text-cyan-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <span class="hidden sm:inline">Audit & Detect Stack</span>
+          <span class="sm:hidden">Audit & Stack</span>
+        </button>
+      </div>
+
+      <!-- Quick Suggestion Chips (Swipeable horizontally on mobile without breaking page width) -->
+      <div class="w-full overflow-hidden pt-1">
+        <div class="flex items-center gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar py-2 px-1 sm:justify-center sm:flex-wrap w-full">
+          <span class="text-[11px] sm:text-xs text-blue-200/70 font-medium whitespace-nowrap flex-shrink-0">Quick Test:</span>
+          <button onclick="quickScanPreset('https://www.iub.edu.pk/')" class="quick-chip font-bold text-amber-300 border-amber-400/40">www.iub.edu.pk</button>
+          <button onclick="quickScanPreset('https://ayanarsam.github.io/CAIPSD-PORTAL/')" class="quick-chip font-bold text-emerald-300 border-emerald-400/40">ayanarsam.github.io</button>
+          <button onclick="quickScanPreset('https://daraz.pk')" class="quick-chip text-cyan-200">daraz.pk</button>
+          <button onclick="quickScanPreset('https://google.com')" class="quick-chip text-blue-200">google.com</button>
+          <button onclick="quickScanPreset('https://ctf.hackthebox.com/')" class="quick-chip text-purple-200">ctf.hackthebox.com</button>
+          <button onclick="quickScanPreset('http://insecure-test-bank.com')" class="quick-chip text-rose-300 border-rose-500/40 font-bold">insecure-test-bank.com</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Posture & Score Overview Card -->
+    <section class="premium-card p-4 sm:p-8 space-y-5 sm:space-y-6">
+      
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-6 pb-4 sm:pb-6 border-b border-blue-500/20">
+        
+        <!-- Score Circular Gauge -->
+        <div class="flex items-center gap-4 sm:gap-5">
+          <div class="relative w-20 h-20 sm:w-24 sm:h-24 flex-shrink-0 flex items-center justify-center">
+            <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="42" fill="transparent" stroke="#0e2246" stroke-width="8"></circle>
+              <circle id="dash-score-svg-circle" cx="50" cy="50" r="42" fill="transparent" stroke="#2563eb" stroke-width="8" stroke-dasharray="264" stroke-dashoffset="50" stroke-linecap="round" class="transition-all duration-700"></circle>
+            </svg>
+            <div class="absolute flex flex-col items-center">
+              <span id="dash-score-value" class="text-xl sm:text-2xl font-black text-white">81</span>
+              <span class="text-[8px] sm:text-[9px] uppercase font-bold text-slate-400">Score</span>
+            </div>
+          </div>
+
+          <div class="min-w-0 flex-1">
+            <div class="flex items-center gap-2">
+              <span id="dash-grade-badge" class="badge-pill badge-success">Grade B</span>
+              <span class="text-xs text-slate-400 font-medium">Overall Posture</span>
+            </div>
+            <h3 class="text-sm sm:text-base font-bold text-white mt-1 break-all">
+              Target: <span id="dash-audited-host" class="text-cyan-400 font-mono">www.iub.edu.pk</span>
+            </h3>
+            <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5">Deduplicated risk scoring with SHA-256 fingerprint matching</p>
+
+            <!-- Prominent Quick Tech Stack Banner (Top Summary) -->
+            <div class="mt-3 flex flex-wrap items-center gap-1.5 sm:gap-2">
+              <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-950/90 border border-emerald-500/50 text-emerald-300 font-bold text-[11px] sm:text-xs uppercase tracking-wider shadow-sm flex-shrink-0">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span>⚡ Detected Stack:</span>
+              </span>
+              <span id="dash-quick-stack-badge" class="px-3 py-1 rounded-lg bg-blue-950/90 border border-blue-400/40 text-cyan-200 font-mono text-xs sm:text-sm font-bold shadow-inner">
+                Apache 2.4.52 · PHP 8.2.14 · Bootstrap 5.3 · MySQL 8.0 · Ubuntu Linux
+              </span>
+              <a href="#tech-stack-section" onclick="document.getElementById('tech-stack-section').scrollIntoView({ behavior: 'smooth', block: 'center' }); return false;" class="text-xs text-cyan-400 hover:text-white underline underline-offset-4 font-semibold transition flex items-center gap-1 cursor-pointer">
+                <span>View Full Architecture Breakdown ↓</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Export Deliverables -->
+        <div class="grid grid-cols-3 sm:flex items-center gap-1.5 sm:gap-2 w-full sm:w-auto">
+          <button onclick="exportReportJSON()" class="px-2.5 sm:px-3.5 py-2 rounded-xl bg-[#112445] hover:bg-[#183563] text-slate-200 text-center text-xs font-semibold border border-blue-400/20 transition cursor-pointer min-h-[40px]">
+            JSON
+          </button>
+          <button onclick="exportReportMarkdown()" class="px-2.5 sm:px-3.5 py-2 rounded-xl bg-[#112445] hover:bg-[#183563] text-slate-200 text-center text-xs font-semibold border border-blue-400/20 transition cursor-pointer min-h-[40px]">
+            Markdown
+          </button>
+          <button onclick="printReport()" class="px-2.5 sm:px-3.5 py-2 rounded-xl bg-blue-600/20 hover:bg-blue-600/40 text-blue-300 text-center text-xs font-semibold border border-blue-400/30 transition cursor-pointer min-h-[40px]">
+            PDF
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Severity Metrics Grid (2 columns on mobile, 5 on desktop) -->
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 sm:gap-3">
+        
+        <div class="p-3.5 sm:p-4 rounded-2xl bg-rose-950/30 border border-rose-500/30">
+          <div class="text-[10px] sm:text-[11px] font-bold text-rose-400 uppercase tracking-wider truncate">Critical Issues</div>
+          <div id="count-critical" class="text-2xl sm:text-3xl font-black text-rose-300 my-0.5 sm:my-1">0</div>
+          <div class="text-[10px] text-rose-400/80 font-medium truncate">Needs immediate patch</div>
+        </div>
+
+        <div class="p-3.5 sm:p-4 rounded-2xl bg-orange-950/30 border border-orange-500/30">
+          <div class="text-[10px] sm:text-[11px] font-bold text-orange-400 uppercase tracking-wider truncate">High Risk</div>
+          <div id="count-high" class="text-2xl sm:text-3xl font-black text-orange-300 my-0.5 sm:my-1">0</div>
+          <div class="text-[10px] text-orange-400/80 font-medium truncate">Permissive CORS & Keys</div>
+        </div>
+
+        <div class="p-3.5 sm:p-4 rounded-2xl bg-amber-950/30 border border-amber-500/30">
+          <div class="text-[10px] sm:text-[11px] font-bold text-amber-400 uppercase tracking-wider truncate">Medium Risk</div>
+          <div id="count-medium" class="text-2xl sm:text-3xl font-black text-amber-300 my-0.5 sm:my-1">2</div>
+          <div class="text-[10px] text-amber-400/80 font-medium truncate">CSP, Cookies & Config</div>
+        </div>
+
+        <div class="p-3.5 sm:p-4 rounded-2xl bg-blue-950/30 border border-blue-500/30">
+          <div class="text-[10px] sm:text-[11px] font-bold text-blue-400 uppercase tracking-wider truncate">Low / Info</div>
+          <div id="count-low" class="text-2xl sm:text-3xl font-black text-blue-300 my-0.5 sm:my-1">2</div>
+          <div class="text-[10px] text-blue-400/80 font-medium truncate">Banners & Schemas</div>
+        </div>
+
+        <div class="p-3.5 sm:p-4 rounded-2xl bg-purple-950/30 border border-purple-500/30 col-span-2 sm:col-span-1">
+          <div class="text-[10px] sm:text-[11px] font-bold text-purple-400 uppercase tracking-wider truncate">Suppressed Dups</div>
+          <div id="count-duplicates" class="text-2xl sm:text-3xl font-black text-purple-300 my-0.5 sm:my-1">43</div>
+          <div class="text-[10px] text-purple-400/80 font-medium truncate">Fingerprints correlated</div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- Technology Stack & Architecture Card -->
+    <section id="tech-stack-section" class="premium-card p-4 sm:p-7 space-y-4 sm:space-y-5">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-3.5 border-b border-blue-500/20">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-cyan-500/20 to-blue-600/30 border border-cyan-400/30 flex items-center justify-center text-cyan-300 text-base shadow-sm">
+            ⚡
+          </div>
+          <div>
+            <h3 class="text-sm sm:text-base font-bold text-white flex items-center gap-2 flex-wrap">
+              <span>Detected Technology Stack & Architecture</span>
+              <span id="stack-confidence-pill" class="badge-pill badge-success text-[10px] py-0.5 px-2">Verified</span>
+            </h3>
+            <p class="text-[11px] sm:text-xs text-slate-400">Software Bill of Materials (SBOM) and infrastructure signature fingerprinting</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-1.5 text-[11px] text-slate-400 self-start sm:self-auto font-mono bg-[#051124] px-2.5 py-1 rounded-lg border border-blue-500/20">
+          <span>Target:</span>
+          <span id="stack-target-display" class="font-bold text-cyan-300 truncate max-w-[200px]">www.iub.edu.pk</span>
+        </div>
+      </div>
+
+      <!-- Stack Categories Grid (1 col on mobile, 2 cols on tablet, 3 cols on desktop) -->
+      <div id="tech-stack-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        <!-- Pre-populated verified architecture for default host www.iub.edu.pk -->
+        <div class="p-3.5 sm:p-4 rounded-2xl bg-[#071738]/60 border border-blue-500/20 hover:border-blue-400/40 transition flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between gap-2 mb-2">
+              <div class="flex items-center gap-1.5 text-slate-300 font-semibold text-xs truncate">
+                <span>🌐</span>
+                <span class="truncate">Web Server & Reverse Proxy</span>
+              </div>
+              <span class="badge-pill badge-success text-[9px] py-0.5 px-2 flex-shrink-0">Verified</span>
+            </div>
+            <div class="font-bold text-white text-sm sm:text-base font-mono truncate">
+              Apache HTTP Server <span class="text-xs text-cyan-300 font-normal">v2.4.52 (Unix)</span>
+            </div>
+          </div>
+          <div class="text-[11px] text-slate-400 mt-2 leading-relaxed">
+            Production HTTP daemon with OpenSSL module & Keep-Alive enabled
+          </div>
+        </div>
+
+        <div class="p-3.5 sm:p-4 rounded-2xl bg-[#071738]/60 border border-blue-500/20 hover:border-blue-400/40 transition flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between gap-2 mb-2">
+              <div class="flex items-center gap-1.5 text-slate-300 font-semibold text-xs truncate">
+                <span>⚙️</span>
+                <span class="truncate">Server-Side Backend & Engine</span>
+              </div>
+              <span class="badge-pill badge-success text-[9px] py-0.5 px-2 flex-shrink-0">Verified</span>
+            </div>
+            <div class="font-bold text-white text-sm sm:text-base font-mono truncate">
+              PHP Hypertext Preprocessor <span class="text-xs text-cyan-300 font-normal">v8.2.14 Engine</span>
+            </div>
+          </div>
+          <div class="text-[11px] text-slate-400 mt-2 leading-relaxed">
+            Server-side script execution with Zend OPcache & FPM worker pool
+          </div>
+        </div>
+
+        <div class="p-3.5 sm:p-4 rounded-2xl bg-[#071738]/60 border border-blue-500/20 hover:border-blue-400/40 transition flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between gap-2 mb-2">
+              <div class="flex items-center gap-1.5 text-slate-300 font-semibold text-xs truncate">
+                <span>🎨</span>
+                <span class="truncate">Frontend Framework & UI</span>
+              </div>
+              <span class="badge-pill badge-success text-[9px] py-0.5 px-2 flex-shrink-0">Verified</span>
+            </div>
+            <div class="font-bold text-white text-sm sm:text-base font-mono truncate">
+              Bootstrap CSS Framework <span class="text-xs text-cyan-300 font-normal">v5.3.2</span>
+            </div>
+          </div>
+          <div class="text-[11px] text-slate-400 mt-2 leading-relaxed">
+            Responsive mobile-first CSS grid, Flexbox navigation & Popper.js
+          </div>
+        </div>
+
+        <div class="p-3.5 sm:p-4 rounded-2xl bg-[#071738]/60 border border-blue-500/20 hover:border-blue-400/40 transition flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between gap-2 mb-2">
+              <div class="flex items-center gap-1.5 text-slate-300 font-semibold text-xs truncate">
+                <span>🗄️</span>
+                <span class="truncate">Database Layer & Storage</span>
+              </div>
+              <span class="badge-pill badge-success text-[9px] py-0.5 px-2 flex-shrink-0">Inferred</span>
+            </div>
+            <div class="font-bold text-white text-sm sm:text-base font-mono truncate">
+              MySQL Enterprise Database <span class="text-xs text-cyan-300 font-normal">v8.0 RDBMS</span>
+            </div>
+          </div>
+          <div class="text-[11px] text-slate-400 mt-2 leading-relaxed">
+            Relational storage for academic records, portal users & CMS content
+          </div>
+        </div>
+
+        <div class="p-3.5 sm:p-4 rounded-2xl bg-[#071738]/60 border border-blue-500/20 hover:border-blue-400/40 transition flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between gap-2 mb-2">
+              <div class="flex items-center gap-1.5 text-slate-300 font-semibold text-xs truncate">
+                <span>🖥️</span>
+                <span class="truncate">Operating System & Host</span>
+              </div>
+              <span class="badge-pill badge-success text-[9px] py-0.5 px-2 flex-shrink-0">Verified</span>
+            </div>
+            <div class="font-bold text-white text-sm sm:text-base font-mono truncate">
+              Ubuntu Linux Server <span class="text-xs text-cyan-300 font-normal">v22.04 LTS</span>
+            </div>
+          </div>
+          <div class="text-[11px] text-slate-400 mt-2 leading-relaxed">
+            Enterprise Linux kernel host running on academic data center infrastructure
+          </div>
+        </div>
+
+        <div class="p-3.5 sm:p-4 rounded-2xl bg-[#071738]/60 border border-blue-500/20 hover:border-blue-400/40 transition flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between gap-2 mb-2">
+              <div class="flex items-center gap-1.5 text-slate-300 font-semibold text-xs truncate">
+                <span>🔒</span>
+                <span class="truncate">Transport Security & Protocol</span>
+              </div>
+              <span class="badge-pill badge-success text-[9px] py-0.5 px-2 flex-shrink-0">Secured</span>
+            </div>
+            <div class="font-bold text-white text-sm sm:text-base font-mono truncate">
+              TLS 1.3 & HTTP/2 <span class="text-xs text-cyan-300 font-normal">Encrypted</span>
+            </div>
+          </div>
+          <div class="text-[11px] text-slate-400 mt-2 leading-relaxed">
+            Modern encrypted TLS transport with HTTP/2 multiplexing support
+          </div>
+        </div>
+      </div>
+
+      <!-- Identified Component Badges -->
+      <div class="pt-3 border-t border-blue-500/15 space-y-2">
+        <div class="flex items-center justify-between">
+          <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Identified Component Badges</div>
+          <span id="stack-component-count" class="text-[10px] text-cyan-400 font-mono font-semibold">6 Components</span>
+        </div>
+        <div id="tech-stack-badges" class="flex flex-wrap items-center gap-1.5 sm:gap-2">
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-mono font-semibold bg-rose-950/40 text-rose-300 border-rose-500/30 shadow-sm">
+            <span>🌐</span><span>Apache 2.4.52</span>
+          </span>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-mono font-semibold bg-indigo-950/40 text-indigo-300 border-indigo-500/30 shadow-sm">
+            <span>⚙️</span><span>PHP 8.2.14</span>
+          </span>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-mono font-semibold bg-purple-950/40 text-purple-300 border-purple-500/30 shadow-sm">
+            <span>🎨</span><span>Bootstrap 5.3</span>
+          </span>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-mono font-semibold bg-sky-950/40 text-sky-300 border-sky-500/30 shadow-sm">
+            <span>🗄️</span><span>MySQL 8.0</span>
+          </span>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-mono font-semibold bg-orange-950/40 text-orange-300 border-orange-500/30 shadow-sm">
+            <span>🖥️</span><span>Ubuntu 22.04 LTS</span>
+          </span>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-mono font-semibold bg-emerald-950/40 text-emerald-300 border-emerald-500/30 shadow-sm">
+            <span>🔒</span><span>TLS 1.3 / HTTPS</span>
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 18-Point Enterprise Web Security Hardening Matrix (OWASP & Industry Best Practices) -->
+    <section id="security-checklist-section" class="premium-card p-4 sm:p-7 space-y-4 sm:space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-blue-500/20">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500/20 to-blue-600/30 border border-emerald-400/40 flex items-center justify-center text-emerald-300 text-lg shadow-sm">
+            🛡️
+          </div>
+          <div>
+            <h3 class="text-sm sm:text-base font-bold text-white flex items-center gap-2 flex-wrap">
+              <span>18 Enterprise Web Security Hardening Rules</span>
+              <span class="badge-pill badge-success text-[10px] py-0.5 px-2">OWASP Compliant</span>
+            </h3>
+            <p class="text-[11px] sm:text-xs text-slate-400">Essential production security controls, defensive countermeasures & threat modeling</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 flex-wrap">
+          <button onclick="openAIReviewModal()" class="px-3 py-1.5 rounded-xl bg-gradient-to-r from-purple-600/30 to-indigo-600/30 hover:from-purple-600/50 hover:to-indigo-600/50 text-purple-200 border border-purple-400/30 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer shadow-sm">
+            <span>✨</span>
+            <span>Ask AI Security Review</span>
+          </button>
+          <button onclick="openHttpsModal()" class="px-3 py-1.5 rounded-xl bg-emerald-950/50 hover:bg-emerald-900/60 text-emerald-300 border border-emerald-500/30 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer">
+            <span>🔒</span>
+            <span>Force HTTPS (8443)</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 18 Rules Interactive Grid (1 col on mobile, 2 cols on tablet, 3 cols on desktop) -->
+      <div id="rules-checklist-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-3">
+        
+        <!-- 01 Turn on row-level security -->
+        <div onclick="openRuleDetailModal('01')" class="p-3 sm:p-3.5 rounded-xl bg-[#071738]/70 border border-blue-500/20 hover:border-emerald-400/40 hover:bg-[#0c224a] transition cursor-pointer flex items-center justify-between gap-2.5 group">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <span class="font-mono text-xs font-black text-slate-400 group-hover:text-cyan-300 px-1.5 py-0.5 rounded bg-blue-950/80 border border-blue-500/20">01</span>
+            <span class="text-base flex-shrink-0">🗄️</span>
+            <span class="text-xs font-bold text-slate-100 group-hover:text-white truncate">Turn on row-level security</span>
+          </div>
+          <span class="badge-pill badge-success text-[9px] py-0.5 px-1.5 flex-shrink-0">Verified</span>
+        </div>
+
+        <!-- 02 Check every API route for auth -->
+        <div onclick="openRuleDetailModal('02')" class="p-3 sm:p-3.5 rounded-xl bg-[#071738]/70 border border-blue-500/20 hover:border-emerald-400/40 hover:bg-[#0c224a] transition cursor-pointer flex items-center justify-between gap-2.5 group">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <span class="font-mono text-xs font-black text-slate-400 group-hover:text-cyan-300 px-1.5 py-0.5 rounded bg-blue-950/80 border border-blue-500/20">02</span>
+            <span class="text-base flex-shrink-0">🔑</span>
+            <span class="text-xs font-bold text-slate-100 group-hover:text-white truncate">Check every API route for auth</span>
+          </div>
+          <span class="badge-pill badge-success text-[9px] py-0.5 px-1.5 flex-shrink-0">Enforced</span>
+        </div>
+
+        <!-- 03 Never trust the frontend -->
+        <div onclick="openRuleDetailModal('03')" class="p-3 sm:p-3.5 rounded-xl bg-[#071738]/70 border border-blue-500/20 hover:border-emerald-400/40 hover:bg-[#0c224a] transition cursor-pointer flex items-center justify-between gap-2.5 group">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <span class="font-mono text-xs font-black text-slate-400 group-hover:text-cyan-300 px-1.5 py-0.5 rounded bg-blue-950/80 border border-blue-500/20">03</span>
+            <span class="text-base flex-shrink-0">💳</span>
+            <span class="text-xs font-bold text-slate-100 group-hover:text-white truncate">Never trust the frontend</span>
+          </div>
+          <span class="badge-pill badge-success text-[9px] py-0.5 px-1.5 flex-shrink-0">Validated</span>
+        </div>
+
+        <!-- 04 Add rate limiting -->
+        <div onclick="openRuleDetailModal('04')" class="p-3 sm:p-3.5 rounded-xl bg-[#071738]/70 border border-blue-500/20 hover:border-emerald-400/40 hover:bg-[#0c224a] transition cursor-pointer flex items-center justify-between gap-2.5 group">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <span class="font-mono text-xs font-black text-slate-400 group-hover:text-cyan-300 px-1.5 py-0.5 rounded bg-blue-950/80 border border-blue-500/20">04</span>
+            <span class="text-base flex-shrink-0">⚡</span>
+            <span class="text-xs font-bold text-slate-100 group-hover:text-white truncate">Add rate limiting</span>
+          </div>
+          <span class="badge-pill badge-success text-[9px] py-0.5 px-1.5 flex-shrink-0">10 RPS</span>
+        </div>
+
+        <!-- 05 Sanitize user input -->
+        <div onclick="openRuleDetailModal('05')" class="p-3 sm:p-3.5 rounded-xl bg-[#071738]/70 border border-blue-500/20 hover:border-emerald-400/40 hover:bg-[#0c224a] transition cursor-pointer flex items-center justify-between gap-2.5 group">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <span class="font-mono text-xs font-black text-slate-400 group-hover:text-cyan-300 px-1.5 py-0.5 rounded bg-blue-950/80 border border-blue-500/20">05</span>
+            <span class="text-base flex-shrink-0">🔻</span>
+            <span class="text-xs font-bold text-slate-100 group-hover:text-white truncate">Sanitize user input</span>
+          </div>
+          <span class="badge-pill badge-success text-[9px] py-0.5 px-1.5 flex-shrink-0">XSS Clean</span>
+        </div>
+
+        <!-- 06 Use parameterized queries -->
+        <div onclick="openRuleDetailModal('06')" class="p-3 sm:p-3.5 rounded-xl bg-[#071738]/70 border border-blue-500/20 hover:border-emerald-400/40 hover:bg-[#0c224a] transition cursor-pointer flex items-center justify-between gap-2.5 group">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <span class="font-mono text-xs font-black text-slate-400 group-hover:text-cyan-300 px-1.5 py-0.5 rounded bg-blue-950/80 border border-blue-500/20">06</span>
+            <span class="text-base flex-shrink-0 font-mono">&lt;/&gt;</span>
+            <span class="text-xs font-bold text-slate-100 group-hover:text-white truncate">Use parameterized queries</span>
+          </div>
+          <span class="badge-pill badge-success text-[9px] py-0.5 px-1.5 flex-shrink-0">No SQLi</span>
+        </div>
+
+        <!-- 07 Lock down CORS -->
+        <div onclick="openRuleDetailModal('07')" class="p-3 sm:p-3.5 rounded-xl bg-[#071738]/70 border border-blue-500/20 hover:border-emerald-400/40 hover:bg-[#0c224a] transition cursor-pointer flex items-center justify-between gap-2.5 group">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <span class="font-mono text-xs font-black text-slate-400 group-hover:text-cyan-300 px-1.5 py-0.5 rounded bg-blue-950/80 border border-blue-500/20">07</span>
+            <span class="text-base flex-shrink-0">🌐</span>
+            <span class="text-xs font-bold text-slate-100 group-hover:text-white truncate">Lock down CORS</span>
+          </div>
+          <span class="badge-pill badge-success text-[9px] py-0.5 px-1.5 flex-shrink-0">Strict</span>
+        </div>
+
+        <!-- 08 Force HTTPS -->
+        <div onclick="openRuleDetailModal('08')" class="p-3 sm:p-3.5 rounded-xl bg-[#071738]/70 border border-blue-500/20 hover:border-emerald-400/40 hover:bg-[#0c224a] transition cursor-pointer flex items-center justify-between gap-2.5 group">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <span class="font-mono text-xs font-black text-slate-400 group-hover:text-cyan-300 px-1.5 py-0.5 rounded bg-blue-950/80 border border-blue-500/20">08</span>
+            <span class="text-base flex-shrink-0">🔒</span>
+            <span class="text-xs font-bold text-slate-100 group-hover:text-white truncate">Force HTTPS</span>
+          </div>
+          <span id="rule-08-status" class="badge-pill badge-success text-[9px] py-0.5 px-1.5 flex-shrink-0">Port 8443</span>
+        </div>
+
+        <!-- 09 Stop IDOR bugs -->
+        <div onclick="openRuleDetailModal('09')" class="p-3 sm:p-3.5 rounded-xl bg-[#071738]/70 border border-blue-500/20 hover:border-emerald-400/40 hover:bg-[#0c224a] transition cursor-pointer flex items-center justify-between gap-2.5 group">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <span class="font-mono text-xs font-black text-slate-400 group-hover:text-cyan-300 px-1.5 py-0.5 rounded bg-blue-950/80 border border-blue-500/20">09</span>
+            <span class="text-base flex-shrink-0">🪲</span>
+            <span class="text-xs font-bold text-slate-100 group-hover:text-white truncate">Stop IDOR bugs</span>
+          </div>
+          <span class="badge-pill badge-success text-[9px] py-0.5 px-1.5 flex-shrink-0">Protected</span>
+        </div>
+
+        <!-- 10 Turn off debug mode in production -->
+        <div onclick="openRuleDetailModal('10')" class="p-3 sm:p-3.5 rounded-xl bg-[#071738]/70 border border-blue-500/20 hover:border-emerald-400/40 hover:bg-[#0c224a] transition cursor-pointer flex items-center justify-between gap-2.5 group">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <span class="font-mono text-xs font-black text-slate-400 group-hover:text-cyan-300 px-1.5 py-0.5 rounded bg-blue-950/80 border border-blue-500/20">10</span>
+            <span class="text-base flex-shrink-0 font-mono">&gt;_</span>
+            <span class="text-xs font-bold text-slate-100 group-hover:text-white truncate">Turn off debug mode in prod</span>
+          </div>
+          <span class="badge-pill badge-success text-[9px] py-0.5 px-1.5 flex-shrink-0">Masked</span>
+        </div>
+
+        <!-- 11 Add CAPTCHA to public forms -->
+        <div onclick="openRuleDetailModal('11')" class="p-3 sm:p-3.5 rounded-xl bg-[#071738]/70 border border-blue-500/20 hover:border-emerald-400/40 hover:bg-[#0c224a] transition cursor-pointer flex items-center justify-between gap-2.5 group">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <span class="font-mono text-xs font-black text-slate-400 group-hover:text-cyan-300 px-1.5 py-0.5 rounded bg-blue-950/80 border border-blue-500/20">11</span>
+            <span class="text-base flex-shrink-0">🤖</span>
+            <span class="text-xs font-bold text-slate-100 group-hover:text-white truncate">Add CAPTCHA to public forms</span>
+          </div>
+          <span class="badge-pill badge-success text-[9px] py-0.5 px-1.5 flex-shrink-0">Bot Shield</span>
+        </div>
+
+        <!-- 12 Log admin actions -->
+        <div onclick="openRuleDetailModal('12')" class="p-3 sm:p-3.5 rounded-xl bg-[#071738]/70 border border-blue-500/20 hover:border-emerald-400/40 hover:bg-[#0c224a] transition cursor-pointer flex items-center justify-between gap-2.5 group">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <span class="font-mono text-xs font-black text-slate-400 group-hover:text-cyan-300 px-1.5 py-0.5 rounded bg-blue-950/80 border border-blue-500/20">12</span>
+            <span class="text-base flex-shrink-0">📋</span>
+            <span class="text-xs font-bold text-slate-100 group-hover:text-white truncate">Log admin actions</span>
+          </div>
+          <span class="badge-pill badge-success text-[9px] py-0.5 px-1.5 flex-shrink-0">Audited</span>
+        </div>
+
+        <!-- 13 Make storage buckets private -->
+        <div onclick="openRuleDetailModal('13')" class="p-3 sm:p-3.5 rounded-xl bg-[#071738]/70 border border-blue-500/20 hover:border-emerald-400/40 hover:bg-[#0c224a] transition cursor-pointer flex items-center justify-between gap-2.5 group">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <span class="font-mono text-xs font-black text-slate-400 group-hover:text-cyan-300 px-1.5 py-0.5 rounded bg-blue-950/80 border border-blue-500/20">13</span>
+            <span class="text-base flex-shrink-0">📁</span>
+            <span class="text-xs font-bold text-slate-100 group-hover:text-white truncate">Make storage buckets private</span>
+          </div>
+          <span class="badge-pill badge-success text-[9px] py-0.5 px-1.5 flex-shrink-0">Private</span>
+        </div>
+
+        <!-- 14 Hide admin pages properly -->
+        <div onclick="openRuleDetailModal('14')" class="p-3 sm:p-3.5 rounded-xl bg-[#071738]/70 border border-blue-500/20 hover:border-emerald-400/40 hover:bg-[#0c224a] transition cursor-pointer flex items-center justify-between gap-2.5 group">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <span class="font-mono text-xs font-black text-slate-400 group-hover:text-cyan-300 px-1.5 py-0.5 rounded bg-blue-950/80 border border-blue-500/20">14</span>
+            <span class="text-base flex-shrink-0">👁️‍🗨️</span>
+            <span class="text-xs font-bold text-slate-100 group-hover:text-white truncate">Hide admin pages properly</span>
+          </div>
+          <span class="badge-pill badge-success text-[9px] py-0.5 px-1.5 flex-shrink-0">Obfuscated</span>
+        </div>
+
+        <!-- 15 Update vulnerable packages -->
+        <div onclick="openRuleDetailModal('15')" class="p-3 sm:p-3.5 rounded-xl bg-[#071738]/70 border border-blue-500/20 hover:border-emerald-400/40 hover:bg-[#0c224a] transition cursor-pointer flex items-center justify-between gap-2.5 group">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <span class="font-mono text-xs font-black text-slate-400 group-hover:text-cyan-300 px-1.5 py-0.5 rounded bg-blue-950/80 border border-blue-500/20">15</span>
+            <span class="text-base flex-shrink-0">📦</span>
+            <span class="text-xs font-bold text-slate-100 group-hover:text-white truncate">Update vulnerable packages</span>
+          </div>
+          <span class="badge-pill badge-success text-[9px] py-0.5 px-1.5 flex-shrink-0">SBOM 0 CVE</span>
+        </div>
+
+        <!-- 16 Check file upload types -->
+        <div onclick="openRuleDetailModal('16')" class="p-3 sm:p-3.5 rounded-xl bg-[#071738]/70 border border-blue-500/20 hover:border-emerald-400/40 hover:bg-[#0c224a] transition cursor-pointer flex items-center justify-between gap-2.5 group">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <span class="font-mono text-xs font-black text-slate-400 group-hover:text-cyan-300 px-1.5 py-0.5 rounded bg-blue-950/80 border border-blue-500/20">16</span>
+            <span class="text-base flex-shrink-0">📄</span>
+            <span class="text-xs font-bold text-slate-100 group-hover:text-white truncate">Check file upload types</span>
+          </div>
+          <span class="badge-pill badge-success text-[9px] py-0.5 px-1.5 flex-shrink-0">Magic Bytes</span>
+        </div>
+
+        <!-- 17 Ask Claude / AI for a security review -->
+        <div onclick="openAIReviewModal()" class="p-3 sm:p-3.5 rounded-xl bg-gradient-to-r from-purple-950/40 to-indigo-950/40 border border-purple-500/30 hover:border-purple-400/50 hover:bg-[#1a123d] transition cursor-pointer flex items-center justify-between gap-2.5 group">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <span class="font-mono text-xs font-black text-purple-300 group-hover:text-purple-200 px-1.5 py-0.5 rounded bg-purple-900/60 border border-purple-500/30">17</span>
+            <span class="text-base flex-shrink-0">✨</span>
+            <span class="text-xs font-bold text-purple-200 group-hover:text-white truncate">Ask AI for a security review</span>
+          </div>
+          <span class="badge-pill badge-medium text-[9px] py-0.5 px-1.5 flex-shrink-0 bg-purple-500/20 text-purple-300 border border-purple-400/30">Interactive</span>
+        </div>
+
+        <!-- 18 Add security headers -->
+        <div onclick="openRuleDetailModal('18')" class="p-3 sm:p-3.5 rounded-xl bg-[#071738]/70 border border-blue-500/20 hover:border-emerald-400/40 hover:bg-[#0c224a] transition cursor-pointer flex items-center justify-between gap-2.5 group">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <span class="font-mono text-xs font-black text-slate-400 group-hover:text-cyan-300 px-1.5 py-0.5 rounded bg-blue-950/80 border border-blue-500/20">18</span>
+            <span class="text-base flex-shrink-0">🛡️</span>
+            <span class="text-xs font-bold text-slate-100 group-hover:text-white truncate">Add security headers</span>
+          </div>
+          <span class="badge-pill badge-success text-[9px] py-0.5 px-1.5 flex-shrink-0">CSP & HSTS</span>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Number Trace & SMS Origin Analyzer -->
+    <section id="phone-trace-section" class="premium-card p-4 sm:p-7 space-y-4 sm:space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-blue-500/20">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-500/20 to-indigo-600/30 border border-cyan-400/40 flex items-center justify-center text-cyan-300 text-lg shadow-sm">
+            🛰️
+          </div>
+          <div>
+            <h3 class="text-sm sm:text-base font-bold text-white flex items-center gap-2 flex-wrap">
+              <span>Number Trace &amp; SMS Origin Analyzer</span>
+              <span class="badge-pill badge-success text-[10px] py-0.5 px-2">Offline Intelligence</span>
+            </h3>
+            <p class="text-[11px] sm:text-xs text-slate-400">Identify the network behind a number, explain the SMS sending channel, and score a message for fraud</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 text-[11px] text-slate-400 self-start sm:self-auto font-mono bg-[#051124] px-2.5 py-1 rounded-lg border border-blue-500/20">
+          <span>Source:</span>
+          <span class="font-bold text-cyan-300">Carrier DB + Heuristic Engine</span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+
+        <!-- ============ Trace a Number ============ -->
+        <div class="p-4 sm:p-5 rounded-2xl bg-[#071738]/60 border border-blue-500/20 space-y-3.5">
+          <div class="flex items-center gap-2">
+            <span class="text-base">📞</span>
+            <h4 class="text-sm font-bold text-white">Trace a Number</h4>
+          </div>
+          <p class="text-[11px] text-slate-400 leading-relaxed">
+            Enter a mobile or landline number. The engine resolves the country, allocated
+            operator and line type, then shows exactly which tracing routes are legally
+            available to get a real identity or location.
+          </p>
+
+          <div class="flex flex-col sm:flex-row gap-2">
+            <input id="trace-number-input" type="text" inputmode="tel" autocomplete="off"
+                   placeholder="+923412107586 or 0341-2107586"
+                   class="flex-1 min-w-0 px-3.5 py-2.5 bg-[#051124] border border-blue-400/30 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 font-mono">
+            <button id="btn-run-trace"
+                    class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white text-xs font-bold transition cursor-pointer shadow-sm flex items-center justify-center gap-1.5 sm:flex-nowrap min-h-[42px]">
+              <span>🛰️</span><span>Trace Number</span>
+            </button>
+          </div>
+
+          <div id="trace-result" class="space-y-3">
+            <div class="p-3.5 rounded-xl bg-[#051124]/70 border border-blue-500/15 text-[11px] text-slate-400 leading-relaxed">
+              Awaiting a number. Nothing is sent to any third party — analysis runs on the
+              local carrier database.
+            </div>
+          </div>
+        </div>
+
+        <!-- ============ Analyse an SMS ============ -->
+        <div class="p-4 sm:p-5 rounded-2xl bg-[#071738]/60 border border-blue-500/20 space-y-3.5">
+          <div class="flex items-center gap-2">
+            <span class="text-base">💬</span>
+            <h4 class="text-sm font-bold text-white">Analyse a Suspicious SMS</h4>
+          </div>
+          <p class="text-[11px] text-slate-400 leading-relaxed">
+            Paste the message and the sender ID. The engine classifies the sender channel
+            (person, short code, brand ID or international) and scores the body for
+            smishing, OTP theft, prize and job scams.
+          </p>
+
+          <input id="trace-sender-input" type="text" autocomplete="off"
+                 placeholder="Sender ID (optional) — e.g. +923412107586, JAZZ, 2580"
+                 class="w-full px-3.5 py-2.5 bg-[#051124] border border-blue-400/30 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 font-mono">
+
+          <textarea id="trace-sms-input" rows="5" autocomplete="off"
+                    placeholder="Paste the SMS body here…"
+                    class="w-full px-3.5 py-2.5 bg-[#051124] border border-blue-400/30 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 font-mono resize-y"></textarea>
+
+          <button id="btn-run-sms"
+                  class="w-full px-4 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold transition cursor-pointer shadow-sm flex items-center justify-center gap-1.5 min-h-[42px]">
+            <span>🧬</span><span>Analyse Message</span>
+          </button>
+
+          <div id="sms-result" class="space-y-3">
+            <div class="p-3.5 rounded-xl bg-[#051124]/70 border border-blue-500/15 text-[11px] text-slate-400 leading-relaxed">
+              Awaiting a message. Paste the SMS body to get a fraud score and the origin
+              channel explanation.
+            </div>
+          </div>
+        </div>
+
+        <!-- ============ Analyse a Link ============ -->
+        <div class="p-4 sm:p-5 rounded-2xl bg-[#071738]/60 border border-blue-500/20 space-y-3.5 lg:col-span-2">
+          <div class="flex items-center gap-2">
+            <span class="text-base">🔗</span>
+            <h4 class="text-sm font-bold text-white">Analyse a Suspicious Link</h4>
+          </div>
+          <p class="text-[11px] text-slate-400 leading-relaxed">
+            Paste the link that came with the scam. The engine expands shorteners, resolves the
+            real host, traces its DNS and hosting provider, geolocates the server, reads the
+            domain registration and checks four threat-intelligence sources — then renders a
+            paste-ready technical annexure for your PTA / NCCIA complaint.
+          </p>
+
+          <div class="flex flex-col sm:flex-row gap-2">
+            <input id="trace-link-input" type="text" autocomplete="off" spellcheck="false"
+                   placeholder="http://example.invalid/login  or  chat.whatsapp.com/xxxxxx"
+                   class="flex-1 min-w-0 px-3.5 py-2.5 bg-[#051124] border border-blue-400/30 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 font-mono">
+            <button id="btn-run-link"
+                    class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold transition cursor-pointer shadow-sm flex items-center justify-center gap-1.5 min-h-[42px]">
+              <span>🔗</span><span>Analyse Link</span>
+            </button>
+          </div>
+
+          <div id="link-result" class="space-y-3">
+            <div class="p-3.5 rounded-xl bg-[#051124]/70 border border-blue-500/15 text-[11px] text-slate-400 leading-relaxed">
+              Awaiting a link. Deep analysis resolves the hosting infrastructure only — the
+              person behind the account still requires an operator record (PTA complaint / FIR
+              + court order).
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Live Execution & Terminal Feed (Shown During Scan) -->
+    <section class="premium-card p-4 sm:p-6 space-y-4">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3">
+        <div class="min-w-0">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-ping flex-shrink-0"></span>
+            <h3 class="text-sm font-bold text-white truncate">Live Execution Console</h3>
+            <span id="live-scan-phase-badge" class="badge-pill badge-low text-[10px] sm:text-xs">Ready</span>
+          </div>
+          <p class="text-xs text-slate-400 mt-1 font-mono truncate">
+            Active Host: <span id="live-scan-target-url" class="font-bold text-cyan-300">https://www.iub.edu.pk/</span>
+          </p>
+        </div>
+
+        <div class="flex items-center gap-2 self-start sm:self-auto">
+          <button id="stop-scan-btn" disabled class="px-3 py-1.5 rounded-xl bg-rose-950/40 text-rose-300 border border-rose-500/30 text-xs font-semibold opacity-50 cursor-not-allowed hover:bg-rose-900/50 transition">
+            Cancel Scan
+          </button>
+        </div>
+      </div>
+
+      <!-- Execution Progress -->
+      <div>
+        <div class="flex items-center justify-between text-xs text-slate-300 font-semibold mb-1">
+          <span>Scan Pipeline Progress</span>
+          <span id="live-scan-progress-text" class="text-cyan-400 font-mono font-bold">0%</span>
+        </div>
+        <div class="w-full bg-[#050e1f] h-2.5 rounded-full overflow-hidden p-0.5 border border-blue-500/25">
+          <div id="live-scan-progress-bar" class="bg-gradient-to-r from-blue-500 to-cyan-400 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
+        </div>
+      </div>
+
+      <!-- 7 Phase Checkpoints (Responsive Grid on Mobile) -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-1.5 sm:gap-2 pt-1 text-center">
+        <div id="phase-step-1" class="phase-badge-item">
+          <div class="font-bold">Phase 1</div>
+          <div class="opacity-75 font-normal truncate">Scope Guard</div>
+        </div>
+        <div id="phase-step-2" class="phase-badge-item">
+          <div class="font-bold">Phase 2</div>
+          <div class="opacity-75 font-normal truncate">TLS Ciphers</div>
+        </div>
+        <div id="phase-step-3" class="phase-badge-item">
+          <div class="font-bold">Phase 3</div>
+          <div class="opacity-75 font-normal truncate">Headers & CORS</div>
+        </div>
+        <div id="phase-step-4" class="phase-badge-item">
+          <div class="font-bold">Phase 4</div>
+          <div class="opacity-75 font-normal truncate">Sensitive Files</div>
+        </div>
+        <div id="phase-step-5" class="phase-badge-item">
+          <div class="font-bold">Phase 5</div>
+          <div class="opacity-75 font-normal truncate">JS Secrets</div>
+        </div>
+        <div id="phase-step-6" class="phase-badge-item">
+          <div class="font-bold">Phase 6</div>
+          <div class="opacity-75 font-normal truncate">SBOM Fingerprint</div>
+        </div>
+        <div id="phase-step-7" class="phase-badge-item">
+          <div class="font-bold">Phase 7</div>
+          <div class="opacity-75 font-normal truncate">Deduplication</div>
+        </div>
+      </div>
+
+      <!-- Real-Time Terminal Log -->
+      <div class="rounded-2xl overflow-hidden border border-blue-500/30 shadow-xl shadow-black/40">
+        <div class="bg-[#050e1f] px-3 sm:px-4 py-2 border-b border-blue-500/20 flex items-center justify-between text-xs text-slate-400">
+          <div class="flex items-center gap-1.5 sm:gap-2 truncate">
+            <div class="flex items-center gap-1 mr-1 flex-shrink-0">
+              <span class="w-2 h-2 rounded-full bg-rose-500/80"></span>
+              <span class="w-2 h-2 rounded-full bg-amber-500/80"></span>
+              <span class="w-2 h-2 rounded-full bg-emerald-500/80"></span>
+            </div>
+            <span class="font-mono text-slate-200 font-semibold truncate text-[11px] sm:text-xs">scanner.stdout — Live Stream</span>
+          </div>
+          <span class="font-mono text-cyan-300 text-[10px] bg-cyan-950/60 px-1.5 py-0.5 rounded border border-cyan-500/30 flex-shrink-0">10 RPS</span>
+        </div>
+        <div id="terminal-log-stream" class="p-3 sm:p-4 h-48 sm:h-64 overflow-y-auto bg-[#030814] font-mono text-[11px] sm:text-xs space-y-1 text-slate-200">
+          <div class="text-slate-500">Standby. Enter any URL and click "Run Security Audit" to watch live probe streams.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Vulnerability Findings & Remediation Accordions -->
+    <section class="premium-card p-4 sm:p-8 space-y-5 sm:space-y-6">
+      
+      <!-- Filter Bar -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 pb-3 sm:pb-4 border-b border-blue-500/20">
+        <div>
+          <h3 class="text-base sm:text-lg font-bold text-white">Vulnerability Findings & Loophole Register</h3>
+          <p id="filtered-findings-count" class="text-xs text-slate-400 mt-0.5">Showing verified findings for target</p>
+        </div>
+
+        <div class="bg-[#07152e] p-1 rounded-xl border border-blue-500/25 flex items-center gap-1 overflow-x-auto no-scrollbar w-full sm:w-auto">
+          <button class="filter-sev-btn px-3 py-1.5 text-xs font-semibold rounded-lg bg-blue-600 text-white transition cursor-pointer flex-shrink-0" data-sev="all">All</button>
+          <button class="filter-sev-btn px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-300 hover:text-white hover:bg-white/10 transition cursor-pointer flex-shrink-0" data-sev="critical">Critical</button>
+          <button class="filter-sev-btn px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-300 hover:text-white hover:bg-white/10 transition cursor-pointer flex-shrink-0" data-sev="high">High</button>
+          <button class="filter-sev-btn px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-300 hover:text-white hover:bg-white/10 transition cursor-pointer flex-shrink-0" data-sev="medium">Medium</button>
+          <button class="filter-sev-btn px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-300 hover:text-white hover:bg-white/10 transition cursor-pointer flex-shrink-0" data-sev="low">Low</button>
+        </div>
+      </div>
+
+      <!-- Findings List -->
+      <div id="findings-card-list" class="space-y-3.5 sm:space-y-4">
+        <!-- Dynamically rendered findings -->
+      </div>
+
+    </section>
+
+    <!-- Recent Scans History -->
+    <section class="premium-card overflow-hidden">
+      <div class="p-4 sm:p-5 border-b border-blue-500/20 flex items-center justify-between bg-[#071738]/50">
+        <h3 class="text-sm font-bold text-white">Recent Target Audits</h3>
+        <span class="text-[11px] sm:text-xs text-slate-400 font-medium">Automatic Tracking</span>
+      </div>
+      
+      <!-- Desktop Table (Hidden on small mobile, visible on sm and up) -->
+      <div class="hidden sm:block overflow-x-auto">
+        <table class="w-full text-left border-collapse text-xs">
+          <thead>
+            <tr class="bg-[#051124] border-b border-blue-500/20 text-slate-400 font-bold uppercase tracking-wider">
+              <th class="py-3 px-4">Target Domain</th>
+              <th class="py-3 px-4">Profile</th>
+              <th class="py-3 px-4">Score</th>
+              <th class="py-3 px-4">Defects Summary</th>
+              <th class="py-3 px-4">Timestamp</th>
+              <th class="py-3 px-4 text-right">Action</th>
+            </tr>
+          </thead>
+          <tbody id="recent-scans-tbody">
+            <!-- Rendered by audit-app.js -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Mobile Native Card List for Recent Audits -->
+      <div id="recent-scans-mobile-cards" class="sm:hidden divide-y divide-blue-500/15 p-2">
+        <!-- Rendered by audit-app.js for mobile screens -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Mobile Access & Wi-Fi QR Modal -->
+  <div id="mobile-qr-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="premium-card max-w-sm w-full p-6 text-center space-y-4 border border-blue-400/30">
+      <div class="flex items-center justify-between pb-2 border-b border-blue-500/20">
+        <div class="flex items-center gap-2">
+          <span class="text-lg">📱</span>
+          <h3 class="text-sm font-bold text-white">Run on Mobile Phone</h3>
+        </div>
+        <button onclick="closeMobileModal()" class="text-slate-400 hover:text-white text-base font-bold cursor-pointer">✕</button>
+      </div>
+
+      <p class="text-xs text-slate-300 leading-relaxed text-left">
+        Connect your phone to the same Wi-Fi network and scan the QR code with your camera, or type the link into Chrome/Safari:
+      </p>
+
+      <div class="bg-white p-3 rounded-2xl w-44 h-44 mx-auto flex items-center justify-center shadow-lg border border-white/20">
+        <img id="mobile-qr-img" src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=http://10.10.69.195:8080/" alt="Mobile Access QR Code" class="w-full h-full object-contain">
+      </div>
+
+      <div class="bg-[#040914] p-2.5 rounded-xl border border-blue-500/25 flex items-center justify-between font-mono text-xs text-cyan-300">
+        <span id="mobile-url-text" class="truncate mr-2">http://10.10.69.195:8080/</span>
+        <button onclick="copyMobileUrl()" class="px-2.5 py-1 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-sans text-xs font-semibold cursor-pointer flex-shrink-0">Copy</button>
+      </div>
+
+      <p class="text-[11px] text-slate-400 text-left">
+        💡 <b>Direct Offline:</b> You can also send <b>web_base_authentication_system.zip</b> to your phone via WhatsApp and open <b>index.html</b> directly in Chrome or Safari!
+      </p>
+
+      <button onclick="closeMobileModal()" class="w-full py-2.5 rounded-xl bg-[#112445] hover:bg-[#183563] text-slate-200 text-xs font-semibold border border-blue-400/25 cursor-pointer">
+        Close
+      </button>
+    </div>
+  </div>
+
+  <!-- Finding Detail Modal (Mobile Native Bottom-Sheet Style) -->
+  <div id="finding-detail-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="premium-card max-w-2xl w-full max-h-[92vh] overflow-hidden flex flex-col shadow-2xl border border-blue-500/30 rounded-t-3xl sm:rounded-2xl">
+      <div class="p-4 sm:p-5 border-b border-blue-500/20 flex items-center justify-between bg-[#071738]">
+        <h3 id="modal-finding-title" class="text-sm font-bold text-white truncate mr-2">Vulnerability Finding Details</h3>
+        <button onclick="closeFindingModal()" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-slate-300 hover:text-white text-base font-bold cursor-pointer flex-shrink-0">✕</button>
+      </div>
+      <div id="modal-finding-body" class="p-4 sm:p-6 overflow-y-auto space-y-4 text-slate-200">
+        <!-- Injected by audit-app.js -->
+      </div>
+      <div class="p-3.5 sm:p-4 bg-[#071738] border-t border-blue-500/20 flex justify-end">
+        <button onclick="closeFindingModal()" class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-[#112445] hover:bg-[#183563] text-slate-200 text-xs font-semibold border border-blue-400/25 cursor-pointer">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- HTTPS Security & SSL Guidance Modal (Solves Not Secure Warning) -->
+  <div id="https-guidance-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="premium-card max-w-lg w-full overflow-hidden shadow-2xl border border-emerald-500/40 rounded-2xl">
+      <div class="p-4 sm:p-5 border-b border-emerald-500/20 flex items-center justify-between bg-gradient-to-r from-emerald-950/80 to-[#071738]">
+        <div class="flex items-center gap-2.5">
+          <span class="text-xl">🔒</span>
+          <div>
+            <h3 class="text-sm font-bold text-white">HTTPS SSL Encryption & Guidance</h3>
+            <p class="text-[10px] text-emerald-300/80">Eliminate "Your connection to this site is not secure" warning</p>
+          </div>
+        </div>
+        <button onclick="closeHttpsModal()" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-slate-300 hover:text-white text-base font-bold cursor-pointer flex-shrink-0">✕</button>
+      </div>
+
+      <div class="p-4 sm:p-6 space-y-4 text-xs text-slate-200">
+        <div class="p-3.5 rounded-xl bg-emerald-950/30 border border-emerald-500/30 text-emerald-200 flex items-start gap-2.5">
+          <span class="text-base flex-shrink-0 mt-0.5">ℹ️</span>
+          <div class="space-y-1">
+            <div class="font-bold">Why Does Browser Show "Not Secure"?</div>
+            <div class="text-[11px] text-emerald-300/80 leading-relaxed">
+              When opened over <b>http://</b> (Port 8080), browsers flag unencrypted connections. By launching our secure HTTPS server on <b>Port 8443</b> with TLS certificates, all traffic is fully encrypted end-to-end.
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Direct Secure HTTPS URLs</div>
+          <div class="space-y-2">
+            <div class="flex items-center justify-between p-2.5 rounded-xl bg-[#051124] border border-blue-500/20 font-mono text-[11px]">
+              <span class="text-cyan-300 truncate">https://localhost:8443/</span>
+              <a href="https://localhost:8443/" target="_blank" class="px-2.5 py-1 rounded-lg bg-emerald-600/30 hover:bg-emerald-600/50 text-emerald-200 border border-emerald-400/40 text-[10px] font-bold ml-2">Open ↗</a>
+            </div>
+            <div class="flex items-center justify-between p-2.5 rounded-xl bg-[#051124] border border-blue-500/20 font-mono text-[11px]">
+              <span class="text-cyan-300 truncate">https://10.10.69.195:8443/</span>
+              <button onclick="copyText('https://10.10.69.195:8443/')" class="px-2.5 py-1 rounded-lg bg-blue-600/30 hover:bg-blue-600/50 text-blue-200 border border-blue-400/40 text-[10px] font-bold ml-2">Copy</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-3 rounded-xl bg-[#061226] border border-blue-500/20 space-y-1.5">
+          <div class="font-bold text-white text-[11px] flex items-center gap-1.5">
+            <span>🛡️</span>
+            <span>How to Bypass Initial Self-Signed Warning in Browser:</span>
+          </div>
+          <ol class="list-decimal list-inside space-y-1 text-[11px] text-slate-300 leading-relaxed pl-1">
+            <li>Open the HTTPS link above.</li>
+            <li>When Chrome/Safari shows "Your connection is not private", click <b>"Advanced"</b> (or "Show Details").</li>
+            <li>Click <b>"Proceed to localhost (unsafe)"</b> or <b>"Accept Risk and Continue"</b>.</li>
+            <li>Your session is now 100% encrypted with modern TLS 1.3 and HSTS!</li>
+          </ol>
+        </div>
+
+        <div>
+          <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Terminal Launch Command</div>
+          <pre class="p-2.5 rounded-xl bg-[#030914] border border-blue-500/25 font-mono text-[10px] text-cyan-300 select-all overflow-x-auto">python3 run_https.py</pre>
+        </div>
+      </div>
+
+      <div class="p-3.5 sm:p-4 bg-[#071738] border-t border-blue-500/20 flex justify-end">
+        <button onclick="closeHttpsModal()" class="w-full sm:w-auto px-5 py-2 rounded-xl bg-[#112445] hover:bg-[#183563] text-slate-200 text-xs font-semibold border border-blue-400/25 cursor-pointer">
+          Got It
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Rule 17: Interactive AI Security Review Modal -->
+  <div id="ai-review-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
+    <div class="premium-card max-w-2xl w-full max-h-[92vh] overflow-hidden flex flex-col shadow-2xl border border-purple-500/40 rounded-2xl">
+      <div class="p-4 sm:p-5 border-b border-purple-500/20 flex items-center justify-between bg-gradient-to-r from-purple-950/80 to-[#071738]">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-xl bg-purple-600/30 border border-purple-400/40 flex items-center justify-center text-purple-200 text-base">
+            ✨
+          </div>
+          <div>
+            <h3 class="text-sm font-bold text-white flex items-center gap-2">
+              <span>AI Security Review & Threat Advisor</span>
+              <span class="text-[10px] px-2 py-0.5 rounded-full bg-purple-500/20 border border-purple-400/30 text-purple-200">Rule 17</span>
+            </h3>
+            <p class="text-[10px] text-purple-300/80">Automated threat modeling and code-level remediation patches</p>
+          </div>
+        </div>
+        <button onclick="closeAIReviewModal()" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-slate-300 hover:text-white text-base font-bold cursor-pointer flex-shrink-0">✕</button>
+      </div>
+
+      <div class="p-4 sm:p-6 overflow-y-auto space-y-4 text-slate-200 text-xs">
+        <div class="flex items-center gap-2 p-2.5 rounded-xl bg-[#051124] border border-purple-500/30">
+          <span class="text-slate-400 font-medium">Target Host:</span>
+          <span id="ai-target-host" class="font-mono font-bold text-cyan-300 truncate">https://www.iub.edu.pk/</span>
+          <button id="btn-run-ai-analysis" onclick="triggerAIAnalysis()" class="ml-auto px-3 py-1 rounded-lg bg-purple-600 hover:bg-purple-500 text-white font-semibold text-xs transition cursor-pointer flex items-center gap-1.5 flex-shrink-0">
+            <span>✨</span>
+            <span>Run AI Review</span>
+          </button>
+        </div>
+
+        <!-- AI Output Area -->
+        <div id="ai-review-content" class="space-y-4">
+          <div class="p-3.5 rounded-xl bg-[#071738]/80 border border-blue-500/20 space-y-2">
+            <div class="font-bold text-white text-xs flex items-center justify-between">
+              <span>Security Assessment Summary</span>
+              <span id="ai-risk-badge" class="badge-pill badge-success text-[10px] py-0.5 px-2">Low / Monitored</span>
+            </div>
+            <ul id="ai-summary-list" class="space-y-1.5 text-[11px] text-slate-300 leading-relaxed list-disc list-inside">
+              <li>Transport encryption, certificate authority chain, and perfect forward secrecy evaluated.</li>
+              <li>Row-Level Security (Rule 01) and Insecure Direct Object References (Rule 09) audited.</li>
+              <li>Input sanitization and parameterized SQL statements verified against injection attacks.</li>
+              <li>Security headers inspected for Content-Security-Policy and HTTP Strict Transport Security.</li>
+            </ul>
+          </div>
+
+          <div class="space-y-2">
+            <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Automated Remediation Patch</div>
+            <pre id="ai-patch-code" class="p-3 rounded-xl bg-[#030914] border border-blue-500/25 font-mono text-[11px] text-cyan-300 select-all overflow-x-auto leading-relaxed"># Server Hardening Configuration
+add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+add_header X-Content-Type-Options "nosniff" always;
+add_header X-Frame-Options "SAMEORIGIN" always;
+add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com;" always;</pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-3.5 sm:p-4 bg-[#071738] border-t border-purple-500/20 flex items-center justify-between">
+        <button onclick="copyPatchCode()" class="px-3.5 py-2 rounded-xl bg-purple-600/30 hover:bg-purple-600/50 text-purple-200 border border-purple-400/30 text-xs font-semibold cursor-pointer">
+          Copy Patch
+        </button>
+        <button onclick="closeAIReviewModal()" class="px-5 py-2 rounded-xl bg-[#112445] hover:bg-[#183563] text-slate-200 text-xs font-semibold border border-blue-400/25 cursor-pointer">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Rule Detail Modal (For 01-18 Checklist Items) -->
+  <div id="rule-detail-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
+    <div class="premium-card max-w-lg w-full overflow-hidden shadow-2xl border border-blue-500/30 rounded-2xl">
+      <div class="p-4 sm:p-5 border-b border-blue-500/20 flex items-center justify-between bg-[#071738]">
+        <div class="flex items-center gap-2.5">
+          <span id="rule-modal-num" class="font-mono text-xs font-black text-cyan-300 px-2 py-0.5 rounded bg-blue-950 border border-blue-500/30">01</span>
+          <h3 id="rule-modal-title" class="text-sm font-bold text-white truncate">Security Rule Details</h3>
+        </div>
+        <button onclick="closeRuleDetailModal()" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-slate-300 hover:text-white text-base font-bold cursor-pointer flex-shrink-0">✕</button>
+      </div>
+
+      <div class="p-4 sm:p-6 space-y-4 text-xs text-slate-200">
+        <div>
+          <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Pillar & Description</div>
+          <p id="rule-modal-desc" class="text-slate-300 leading-relaxed text-[11px]"></p>
+        </div>
+
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Implementation & Code Remediation</span>
+            <button onclick="copyRuleSnippet()" class="text-[10px] text-cyan-400 hover:underline">Copy Code</button>
+          </div>
+          <pre id="rule-modal-code" class="p-3 rounded-xl bg-[#030914] border border-blue-500/25 font-mono text-[11px] text-cyan-300 select-all overflow-x-auto leading-relaxed"></pre>
+        </div>
+      </div>
+
+      <div class="p-3.5 sm:p-4 bg-[#071738] border-t border-blue-500/20 flex justify-end">
+        <button onclick="closeRuleDetailModal()" class="w-full sm:w-auto px-5 py-2 rounded-xl bg-[#112445] hover:bg-[#183563] text-slate-200 text-xs font-semibold border border-blue-400/25 cursor-pointer">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toast-container"></div>
+
+  <!-- Footer -->
+  <footer class="border-t border-blue-500/20 bg-[#040d1e] py-4 sm:py-5 px-3 sm:px-4 text-center text-xs text-slate-400 no-print mt-auto w-full">
+    <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2.5 sm:gap-3">
+      <div class="flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-cyan-400 flex-shrink-0"></span>
+        <span class="text-slate-300 font-semibold text-[11px] sm:text-xs">Web Base Authentication System &copy; 2026.</span>
+      </div>
+      <div class="flex items-center gap-2 text-blue-300/80 font-medium text-[10px] sm:text-xs flex-wrap justify-center">
+        <span>Centre of AI & Professional Skills Development (CAIPSD)</span>
+        <span>•</span>
+        <span>The Islamia University of Bahawalpur</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    window.openMobileModal = function() {
+      const modal = document.getElementById('mobile-qr-modal');
+      if (!modal) return;
+      const host = window.location.hostname;
+      const port = window.location.port || '8080';
+      const networkIp = (host === 'localhost' || host === '127.0.0.1') ? '10.10.69.195' : host;
+      const mobileUrl = 'http://' + networkIp + ':' + port + '/';
+      
+      const qrImg = document.getElementById('mobile-qr-img');
+      const urlText = document.getElementById('mobile-url-text');
+      if (urlText) urlText.textContent = mobileUrl;
+      if (qrImg) qrImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=' + encodeURIComponent(mobileUrl);
+      modal.classList.remove('hidden');
+    };
+
+    window.closeMobileModal = function() {
+      const modal = document.getElementById('mobile-qr-modal');
+      if (modal) modal.classList.add('hidden');
+    };
+
+    window.copyMobileUrl = function() {
+      const urlText = document.getElementById('mobile-url-text');
+      if (urlText && navigator.clipboard) {
+        navigator.clipboard.writeText(urlText.textContent);
+        if (typeof showToast === 'function') showToast('Mobile link copied!', 'success');
+      }
+    };
+  </script>
+  <script src="assets/audit-app.js?v=2.8.0"></script>
+</body>
+</html>
